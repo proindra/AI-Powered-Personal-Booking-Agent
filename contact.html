@@ -28,11 +28,9 @@
         }
     </script>
     <style>
-        body { background-color: #0e0e0e; color: #ffffff; -webkit-font-smoothing: antialiased; }
+        body { background-color: #0e0e0e; color: #ffffff; -webkit-font-smoothing: antialiased; -ms-overflow-style: none; /* IE and Edge */ scrollbar-width: none; /* Firefox */ }
         .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: #0e0e0e; }
-        ::-webkit-scrollbar-thumb { background: #484848; }
+        ::-webkit-scrollbar { display: none; }
         input:focus~label, input:not(:placeholder-shown)~label, textarea:focus~label, textarea:not(:placeholder-shown)~label { transform: translateY(-1.5rem) scale(0.85); color: #FF5F1F; }
         /* Fix browser autofill styling breaking dark mode */
         input:-webkit-autofill,
@@ -243,7 +241,7 @@
       <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
       <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
     </div>
-    <p>Made with love by Phenomenon studio</p>
+    <p>made with love TEAM NET-Y</p>
   </div>
 </div>
 </footer>

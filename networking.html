@@ -34,6 +34,8 @@
             background-color: #0e0e0e;
             color: #ffffff;
             -webkit-font-smoothing: antialiased;
+            -ms-overflow-style: none; /* IE and Edge */
+            scrollbar-width: none; /* Firefox */
         }
 
         .material-symbols-outlined {
@@ -41,15 +43,7 @@
         }
 
         ::-webkit-scrollbar {
-            width: 4px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #0e0e0e;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #484848;
+            display: none;
         }
 
         .reveal {
@@ -436,7 +430,7 @@
                     <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
                     <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
                 </div>
-                <p>Made with love by Phenomenon studio</p>
+                <p>made with love TEAM NET-Y</p>
             </div>
         </div>
     </footer>
