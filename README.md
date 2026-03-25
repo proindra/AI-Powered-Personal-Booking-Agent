@@ -18,66 +18,49 @@ A kinetic, single-page event platform built with **Next.js 15**, **TypeScript**,
 
 ---
 
-## Project Structure
+## ⚠️ Critical Technical Notes
 
-```
-frontend/
-├── app/
-│   ├── events/page.tsx        # Main single-page site (all sections)
-│   ├── signin/page.tsx        # Sign in page
-│   ├── networking/page.tsx    # Standalone networking page
-│   ├── contact/page.tsx       # Standalone contact page
-│   ├── booking/page.tsx       # Standalone AI booking page
-│   ├── api/booking/route.ts   # LangGraph booking API proxy
-│   ├── layout.tsx             # Root layout (Navbar, Footer, Canvas)
-│   └── globals.css            # Global styles & animations
-├── components/
-│   ├── Navbar.tsx             # Fixed navbar with smooth scroll
-│   ├── Footer.tsx             # Footer with hash link scroll
-│   ├── EventStackScroll.tsx   # Scroll-stack upcoming events
-│   ├── TrustedByLeaders.tsx   # Animated logo pod section
-│   ├── ExploreTechSection.tsx # Typewriter + SVG section
-│   ├── BookingChat.tsx        # AI chat UI (streaming SSE)
-│   ├── BookingPageClient.tsx  # Booking page client wrapper
-│   ├── AmbientCanvas.tsx      # Animated background canvas
-│   ├── AmbientCanvasLoader.tsx# Dynamic import wrapper
-│   └── ScrollEffects.tsx      # Lenis init, reveal, nav highlight
-```
+> [!IMPORTANT]
+> **Single-Page Architecture**: This project is strictly a Single-Page Application (SPA). All core sections (Networking, Booking, etc.) are implemented as IDs within `app/(main)/page.tsx`. **Do not add standalone page directories** (e.g., `/networking`) as they break the unified kinetic scroll experience.
+
+> [!NOTE]
+> **Conditional BasePath**: To support GitHub Pages deployment, `next.config.ts` uses a conditional `basePath`.
+> - **Development**: Accessible at `http://localhost:3000/`
+> - **Production**: Deployed at `/[Repository-Name]/`
+> *If you change the repository name, update the `basePath` in `next.config.ts`.*
+
+> [!TIP]
+> **Environment Variables**: Create a `.env.local` file in the `frontend` directory:
+> ```env
+> LANGGRAPH_API_URL=your_backend_url_here
+> ```
+> This is required for the AI Booking Agent to communicate with the LangGraph backend.
 
 ---
 
-## Connect Sphere - Personal Booking Agent
-
-Connect Sphere is a premium, AI-powered personal booking and networking platform. It features a stunning brutalist design aesthetic built with Next.js, Tailwind CSS, and Framer Motion.
-
-## 🚀 Key Features
-
-- **Single-Page Experience**: All core sections (Events, Networking, AI Booking, Contact) are accessible on the main page via smooth kinetic scrolling.
-- **AI-Powered Booking**: Integrates a LangGraph-powered intelligent agent for natural language session booking.
-- **Brutalist Design**: High-impact typography, dark mode, kinetic animations, and glassmorphism.
-- **Responsive Layout**: Pixel-perfect alignment across mobile, tablet, and desktop devices.
-- **Interactive UI**: Stack-scrolling event transitions, hover-responsive networking cards, and floating ambient background effects.
-
-## 🛠️ Tech Stack
-
-- **Framework**: Next.js 15 (App Router)
-- **Styling**: Tailwind CSS (with bespoke brutalist utilities)
-- **Animations**: Framer Motion & CSS custom keyframes
-- **Icons**: Google Material Symbols
-- **Typography**: Epilogue (Google Fonts)
-
-## 📁 Project Structure
+## Project Structure
 
 ```text
 /
 ├── frontend/             # Next.js Application Root
-│   ├── app/              # App Router Pages & Styles
-│   ├── components/       # Reusable React Components
-│   ├── public/           # Static Brand Assets
-│   └── package.json      # Dependencies & Scripts
-├── .github/              # GitHub Actions (Deployment)
+│   ├── app/              # App Router (Single-page layout)
+│   │   ├── (main)/page.tsx # THE main page (all sections)
+│   │   ├── (auth)/signin  # Sign-in page
+│   │   ├── api/booking    # AI Agent proxy route
+│   │   └── globals.css    # Branding & Animations
+│   ├── components/       # Reusable Brutalist UI components
+│   ├── public/           # Favicon & Brand Assets
+│   └── next.config.ts    # Deployment & Path configuration
+├── .github/              # CI/CD Workflows
 └── README.md             # Project Documentation
 ```
+
+## 🚀 Key Features
+
+- **Kinetic Single-Page UX**: Seamless transitions between sections via smooth inertia scrolling.
+- **AI-Powered Booking**: Real-time natural language scheduling via LangGraph.
+- **Brutalist Aesthetic**: High-impact typography and custom-built kinetic animations.
+- **Responsive Integrity**: Optimized viewport fitting for all components (no clipping).
 
 ## 💻 Getting Started
 
