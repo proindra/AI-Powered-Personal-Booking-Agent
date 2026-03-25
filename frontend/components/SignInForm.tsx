@@ -1,20 +1,23 @@
 'use client';
 
 import { useGoogleLogin } from '@react-oauth/google';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+// Static export safe navigation
+const goto = (path: string) => {
+  const base = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
+  window.location.href = base + path;
+};
+
 export default function SignInForm() {
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const googleLogin = useGoogleLogin({
     onSuccess: (tokenResponse) => {
-      // Store token and redirect to home
       localStorage.setItem('auth_token', tokenResponse.access_token);
       localStorage.setItem('auth_type', 'google');
-      router.push('/');
+      goto('/');
     },
     onError: () => {
       setError('Google sign-in failed. Please try again.');
@@ -35,17 +38,16 @@ export default function SignInForm() {
   const handleGuestClick = () => {
     localStorage.setItem('auth_type', 'guest');
     localStorage.setItem('auth_token', 'guest');
-    router.push('/');
+    goto('/');
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Placeholder — wire to your backend
     const form = e.currentTarget;
     const email = (form.elements.namedItem('email') as HTMLInputElement).value;
     localStorage.setItem('auth_type', 'email');
     localStorage.setItem('auth_email', email);
-    router.push('/');
+    goto('/');
   };
 
   return (
