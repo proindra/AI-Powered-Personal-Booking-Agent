@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import UserAvatar from "@/components/auth/UserAvatar";
 
 const links = [
   { href: "/#upcoming-events", label: "Upcoming Events" },
@@ -88,6 +89,7 @@ export default function Navbar() {
 
       {/* CTA */}
       <div className="cta-nav flex gap-4 items-center">
+        <UserAvatar />
         <Link href="/signin" className="nav-link text-[10px] sm:text-xs">
           Sign In
         </Link>

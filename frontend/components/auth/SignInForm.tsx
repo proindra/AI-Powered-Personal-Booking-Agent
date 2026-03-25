@@ -19,8 +19,8 @@ export default function SignInForm() {
     setError('');
     setLoading(true);
     signInWithGoogle(
-      (token) => {
-        saveSession({ type: 'google', token });
+      (token, profile) => {
+        saveSession({ type: 'google', token, email: profile.email, profile });
         goto('/');
       },
       (msg) => { setError(msg); setLoading(false); }

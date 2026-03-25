@@ -1,4 +1,5 @@
 import { GOOGLE_CLIENT_ID } from './config';
+import { UserProfile } from './types';
 
 declare global {
   interface Window { google: any; }
@@ -16,8 +17,20 @@ export const loadGoogleScript = (): Promise<void> => {
   });
 };
 
+export const fetchGoogleProfile = async (accessToken: string): Promise<UserProfile> => {
+  const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+  const data = await res.json();
+  return {
+    name: data.name,
+    email: data.email,
+    picture: data.picture,
+  };
+};
+
 export const signInWithGoogle = (
-  onSuccess: (token: string) => void,
+  onSuccess: (token: string, profile: UserProfile) => void,
   onError: (msg: string) => void
 ) => {
   if (!GOOGLE_CLIENT_ID) { onError('Google sign-in is not configured.'); return; }
@@ -26,9 +39,14 @@ export const signInWithGoogle = (
     const client = window.google.accounts.oauth2.initTokenClient({
       client_id: GOOGLE_CLIENT_ID,
       scope: 'email profile',
-      callback: (response: any) => {
+      callback: async (response: any) => {
         if (response.error) { onError('Google sign-in failed.'); return; }
-        onSuccess(response.access_token);
+        try {
+          const profile = await fetchGoogleProfile(response.access_token);
+          onSuccess(response.access_token, profile);
+        } catch {
+          onError('Failed to fetch profile.');
+        }
       },
     });
     client.requestAccessToken();
