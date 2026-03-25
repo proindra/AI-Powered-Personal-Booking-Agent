@@ -10,6 +10,7 @@ import {
 } from '@react-three/rapier';
 import { MeshLineGeometry, MeshLineMaterial } from 'meshline';
 import * as THREE from 'three';
+import { getPath } from '@/utils/paths';
 
 declare module '@react-three/fiber' {
   interface ThreeElements {
@@ -87,9 +88,9 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false }) {
 
   const seg: any = { type: 'dynamic' as RigidBodyProps['type'], canSleep: true, colliders: false, angularDamping: 4, linearDamping: 4 };
 
-  const { nodes, materials } = useGLTF('/card.glb') as any;
-  const texture = useTexture('/lanyard.png');
-  const faviconTexture = useTexture('/icon.svg');
+  const { nodes, materials } = useGLTF(getPath('/card.glb')) as any;
+  const texture = useTexture(getPath('/lanyard.png'));
+  const faviconTexture = useTexture(getPath('/icon.svg'));
   const strapTexture = useMemo(() => faviconTexture.clone(), [faviconTexture]);
   
   useEffect(() => {

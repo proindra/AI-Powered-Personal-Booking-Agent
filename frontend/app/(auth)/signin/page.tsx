@@ -1,4 +1,5 @@
 import LanyardLoader from '@/components/LanyardLoader';
+import { getPath } from '@/utils/paths';
 
 export default function SignInPage() {
   return (
@@ -37,7 +38,7 @@ export default function SignInPage() {
           </div>
 
           {/* Form */}
-          <form className="flex flex-col gap-5" action="/">
+          <form className="flex flex-col gap-5" action={getPath("/")}>
             <div className="flex flex-col gap-2">
               <label htmlFor="email" className="text-[0.65rem] font-bold tracking-[0.3em] text-white/50 uppercase">
                 Email Address

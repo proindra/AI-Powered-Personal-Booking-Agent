@@ -1,5 +1,6 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
+import { getPath } from "@/utils/paths";
 
 interface Message {
   role: "user" | "assistant";
@@ -50,7 +51,7 @@ export default function BookingChat({ initialPrompt, onPromptUsed }: BookingChat
     setLoading(true);
 
     try {
-      const res = await fetch("/api/booking", {
+      const res = await fetch(getPath("/api/booking"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

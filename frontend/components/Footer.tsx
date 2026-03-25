@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { getPath } from "@/utils/paths";
 
 const ArrowIcon = () => (
   <svg width="24" height="24" fill="none" className="group-hover:text-black" stroke="currentColor" viewBox="0 0 24 24">
@@ -26,11 +27,13 @@ function HashLink({ href, className, children }: { href: string; className: stri
   function handleClick(e: React.MouseEvent) {
     if (!hash) return;
     e.preventDefault();
-    const resolvedPath = path === "" ? "/" : path;
-    if (window.location.pathname === resolvedPath) {
+    const resolvedPath = getPath(path === "" ? "/" : path);
+    if (window.location.pathname === resolvedPath || 
+        window.location.pathname === resolvedPath + '/' ||
+        window.location.pathname === resolvedPath.replace(/\/$/, '')) {
       smoothScrollToHash(`#${hash}`);
     } else {
-      window.location.href = href;
+      window.location.href = getPath(href);
     }
   }
   return <Link href={href} onClick={handleClick} className={className}>{children}</Link>;
