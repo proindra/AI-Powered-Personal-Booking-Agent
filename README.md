@@ -59,11 +59,12 @@ A kinetic, single-page event platform built with **Next.js 15**, **TypeScript**,
 
 ## 🚀 Key Features
 
-- **3D Interactive Lanyard**: A physics-based, draggable 3D lanyard featuring a real-time reactive ribbon and the website's favicon.
-- **Kinetic Single-Page UX**: Seamless transitions between sections via smooth inertia scrolling.
-- **AI-Powered Booking**: Real-time natural language scheduling via LangGraph.
-- **Brutalist Aesthetic**: High-impact typography and custom-built kinetic animations.
-- **Responsive Integrity**: Optimized viewport fitting for all components (no clipping).
+- **3D Interactive Lanyard (Optimized)**: A physics-based, draggable 3D lanyard featuring a reactive ribbon and the branding.
+  - *Performance*: Preloaded GLTF assets, capped DPR (1.5x) for 60fps, and a beautiful shimmer skeleton loading state.
+- **Kinetic Single-Page UX**: Seamless transitions between sections via smooth inertia scrolling and reveal animations.
+- **AI-Powered Booking**: Real-time natural language scheduling via LangGraph integration.
+- **Brutalist Design System**: High-impact typography, custom kinetic animations, and a refined "clean & neat" CSS architecture.
+- **Responsive Integrity**: Pixel-perfect layout across all viewports with zero clipping.
 
 ## 💻 Getting Started
 
@@ -83,12 +84,14 @@ A kinetic, single-page event platform built with **Next.js 15**, **TypeScript**,
 
 The project is configured for automated deployment to **GitHub Pages** via GitHub Actions. Any push to the `main` branch triggers a build and deploy cycle.
 
----
-*Made with love by TEAM NET-Y*
+| Environment | URL |
+|---|---|
+| Production | [proindra.github.io/AI-Powered-Personal-Booking-Agent/](https://proindra.github.io/AI-Powered-Personal-Booking-Agent/) |
+| Local Dev | `http://localhost:3000/` |
 
 ---
 
-## Animations
+## 🎨 Animations & UX
 
 | Animation | Description |
 |---|---|
@@ -105,18 +108,15 @@ The project is configured for automated deployment to **GitHub Pages** via GitHu
 
 ---
 
-## Deployment
+## 🛠️ Project Evolution & Cleanup
 
-Deploy instantly on **Vercel**:
-
-```bash
-npm run build
-```
-
-Or connect your GitHub repo to [vercel.com](https://vercel.com) for automatic deployments.
+- **CSS Deduplication**: Removed ~30% redundant CSS, collapsed repeating @keyframes, and unified active reveal states.
+- **Font Optimization**: Switched from double-loading (CSS @import + link) to a single high-priority `<link>` for Material Symbols.
+- **Component Scaling**: Refined the 3D Lanyard texture mapping to prevent logo overflow and improved material visibility in dark mode.
 
 ---
 
-## Team
+## 👥 Team
 
 Built with love by **Team Net-Y** @ 2026
+
