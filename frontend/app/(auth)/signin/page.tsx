@@ -1,4 +1,3 @@
-import LanyardLoader from '@/components/LanyardLoader';
 import SignInForm from '@/components/SignInForm';
 
 export default function SignInPage() {
@@ -21,20 +20,11 @@ export default function SignInPage() {
         <p className="text-[0.6rem] uppercase tracking-[0.3em] font-bold text-white/20">Team Net-Y @ 2026</p>
       </div>
 
-      {/* Right — Form + Lanyard */}
-      <div className="flex-1 flex overflow-hidden bg-dark/20 backdrop-blur-sm">
-
-        {/* Form column */}
-        <div className="flex items-center justify-center w-full lg:w-[400px] shrink-0 px-8 overflow-y-auto">
-          <SignInForm />
-        </div>
-
-        {/* Lanyard column */}
-        <div className="hidden lg:block flex-1 relative" style={{ background: '#0e0e0e' }}>
-          <LanyardLoader />
-        </div>
-
+      {/* Right — Form */}
+      <div className="flex-1 flex items-center justify-center px-8 overflow-y-auto">
+        <SignInForm />
       </div>
+
     </div>
   );
 }
