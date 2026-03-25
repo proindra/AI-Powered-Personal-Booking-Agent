@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export default function SignInNavbar() {
@@ -11,13 +12,21 @@ export default function SignInNavbar() {
 
   return (
     <header className="w-full px-6 lg:px-8 py-4 flex justify-between items-center z-50 fixed top-0 left-0 backdrop-blur-xl bg-white/5 border-b border-white/10">
-      <button
-        onClick={goHome}
-        className="text-xl font-black leading-none tracking-tighter hover:scale-105 transition-transform text-left"
-      >
-        CONNECT<br />
-        <span className="text-brand">SPHERE</span>
-      </button>
+      <div className="flex items-center gap-8">
+        <button
+          onClick={goHome}
+          className="text-xl font-black leading-none tracking-tighter hover:scale-105 transition-transform text-left"
+        >
+          CONNECT<br />
+          <span className="text-brand">SPHERE</span>
+        </button>
+
+        <nav className="hidden md:flex items-center gap-6">
+          <Link href="/networking" className="nav-link text-[10px] uppercase tracking-widest hover:text-brand transition-colors">Networking</Link>
+          <Link href="/booking" className="nav-link text-[10px] uppercase tracking-widest hover:text-brand transition-colors">AI Booking</Link>
+          <Link href="/contact" className="nav-link text-[10px] uppercase tracking-widest hover:text-brand transition-colors">Contact</Link>
+        </nav>
+      </div>
 
       <button
         onClick={goHome}

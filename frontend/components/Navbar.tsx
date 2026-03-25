@@ -5,9 +5,9 @@ import { usePathname, useRouter } from "next/navigation";
 const links = [
   { href: "/#upcoming-events", label: "Upcoming Events" },
   { href: "/#featured-speakers", label: "Speakers" },
-  { href: "/#networking", label: "Networking" },
-  { href: "/#booking", label: "AI Booking" },
-  { href: "/#contact", label: "Contact Us" },
+  { href: "/networking", label: "Networking" },
+  { href: "/booking", label: "AI Booking" },
+  { href: "/contact", label: "Contact Us" },
 ];
 
 function smoothScrollToHash(hash: string) {
@@ -70,16 +70,14 @@ export default function Navbar() {
       {/* Nav Links */}
       <nav className="flex items-center gap-4 lg:gap-10 text-[9px] md:text-xs overflow-x-auto whitespace-nowrap px-4 py-2">
         {links.map((link) => {
-          const basePath = link.href.split("#")[0];
           const hasHash = link.href.includes("#");
-          const isActive = !hasHash && pathname === basePath;
+          const isActive = pathname === link.href;
           return (
             <Link
               key={link.href}
               href={link.href}
               onClick={hasHash ? (e) => handleHashLink(e, link.href) : undefined}
-              className="nav-link"
-              style={{ color: isActive ? "#FF5F1F" : undefined }}
+              className={`nav-link ${isActive ? "active-section" : ""}`}
             >
               {link.label}
             </Link>
