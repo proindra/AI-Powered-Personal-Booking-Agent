@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "export",
+  basePath: "/AI-Powered-Personal-Booking-Agent",
   trailingSlash: true,
   images: {
     unoptimized: true,
