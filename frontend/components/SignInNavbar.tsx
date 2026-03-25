@@ -22,9 +22,9 @@ export default function SignInNavbar() {
         </button>
 
         <nav className="hidden md:flex items-center gap-6">
-          <Link href="/networking" className="nav-link text-[10px] uppercase tracking-widest hover:text-brand transition-colors">Networking</Link>
-          <Link href="/booking" className="nav-link text-[10px] uppercase tracking-widest hover:text-brand transition-colors">AI Booking</Link>
-          <Link href="/contact" className="nav-link text-[10px] uppercase tracking-widest hover:text-brand transition-colors">Contact</Link>
+          <Link href="/#networking" className="nav-link text-[10px] uppercase tracking-widest hover:text-brand transition-colors">Networking</Link>
+          <Link href="/#booking" className="nav-link text-[10px] uppercase tracking-widest hover:text-brand transition-colors">AI Booking</Link>
+          <Link href="/#contact" className="nav-link text-[10px] uppercase tracking-widest hover:text-brand transition-colors">Contact</Link>
         </nav>
       </div>
 
