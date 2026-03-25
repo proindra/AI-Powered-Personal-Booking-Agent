@@ -95,8 +95,8 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false }) {
   
   useEffect(() => {
     if (faviconTexture) {
-      faviconTexture.repeat.set(4, 4);
-      faviconTexture.offset.set(-1.5, -1.5);
+      faviconTexture.repeat.set(1.4, 1.4);
+      faviconTexture.offset.set(-0.2, -0.2);
       faviconTexture.center.set(0.5, 0.5);
       faviconTexture.wrapS = faviconTexture.wrapT = THREE.ClampToEdgeWrapping;
       faviconTexture.minFilter = THREE.LinearFilter;
@@ -105,6 +105,7 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false }) {
       faviconTexture.needsUpdate = true;
     }
     if (strapTexture) {
+      strapTexture.repeat.set(2, 2);
       strapTexture.wrapS = strapTexture.wrapT = THREE.RepeatWrapping;
       strapTexture.minFilter = THREE.LinearFilter;
       strapTexture.magFilter = THREE.LinearFilter;
@@ -154,8 +155,6 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false }) {
   });
 
   curve.curveType = 'chordal';
-  // Use RepeatWrapping for the band texture too
-  faviconTexture.wrapS = faviconTexture.wrapT = THREE.RepeatWrapping;
 
   return (
     <>
@@ -174,12 +173,13 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false }) {
           >
             <mesh geometry={nodes.card.geometry}>
               <meshPhysicalMaterial 
+                color="#ffffff"
                 map={faviconTexture} 
                 map-anisotropy={16} 
                 clearcoat={1} 
                 clearcoatRoughness={0.15} 
-                roughness={0.9} 
-                metalness={0.8} 
+                roughness={0.4} 
+                metalness={0.1} 
               />
             </mesh>
             <mesh geometry={nodes.clip.geometry} material={materials.metal} material-roughness={0.3} />
