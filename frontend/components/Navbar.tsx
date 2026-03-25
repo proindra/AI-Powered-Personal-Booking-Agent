@@ -1,7 +1,9 @@
 "use client";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import UserAvatar from "@/components/auth/UserAvatar";
+import { getSession } from "@/lib/auth/types";
 
 const links = [
   { href: "/#upcoming-events", label: "Upcoming Events" },
@@ -28,6 +30,11 @@ function smoothScrollToHash(hash: string) {
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    setIsLoggedIn(!!getSession());
+  }, []);
 
   function handleLogoClick(e: React.MouseEvent) {
     e.preventDefault();
@@ -90,9 +97,11 @@ export default function Navbar() {
       {/* CTA */}
       <div className="cta-nav flex gap-4 items-center">
         <UserAvatar />
-        <Link href="/signin" className="nav-link text-[10px] sm:text-xs">
-          Sign In
-        </Link>
+        {!isLoggedIn && (
+          <Link href="/signin" className="nav-link text-[10px] sm:text-xs">
+            Sign In
+          </Link>
+        )}
         <Link href="/#contact" onClick={(e) => handleHashLink(e, "/#contact")}>
           <button className="glow-btn border border-white/20 px-6 py-2 text-xs font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-all duration-300">
             Save My Spot
