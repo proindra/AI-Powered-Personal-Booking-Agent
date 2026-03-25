@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html class="h-full" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Sign In | Connect Sphere</title>
+  <!-- Google Fonts: Epilogue -->
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet"/>
+  <!-- Material Symbols -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: '#FF5F1F',
+            dark: '#0e0e0e',
+            accent: '#0066FF',
+          },
+          fontFamily: {
+            sans: ['Epilogue', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style data-purpose="layout-tweaks">
+    body {
+      background-color: #0e0e0e;
+      color: #ffffff;
+      -webkit-font-smoothing: antialiased;
+      -ms-overflow-style: none; /* IE and Edge */
+      scrollbar-width: none; /* Firefox */
+    }
+    ::-webkit-scrollbar {
+      display: none;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .nav-link {
+      letter-spacing: 0.1em;
+      font-size: 0.75rem;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+    .nav-link:hover {
+      color: #FF5F1F;
+    }
+    .brutalist-card {
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .brutalist-card:hover {
+      border-color: #FF5F1F;
+      background: rgba(255,95,31,0.05);
+      transform: translateY(-5px);
+    }
+    /* Kinetic CTA Glow */
+    .glow-btn {
+      position: relative;
+      overflow: hidden;
+    }
+    .glow-btn::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .glow-btn:hover::after {
+      opacity: 1;
+    }
+    /* Input field styling */
+    .brutalist-input {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: all 0.3s ease;
+    }
+    .brutalist-input:focus {
+      outline: none;
+      border-color: #FF5F1F;
+      background: rgba(255,95,31,0.05);
+      box-shadow: 0 0 15px rgba(255,95,31,0.2);
+    }
+    /* Flowing animated gradient for background */
+    @keyframes gradient-xy {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+  </style>
+</head>
+<body class="font-sans flex flex-col min-h-screen relative overflow-x-hidden">
+
+    <!-- BEGIN: Navigation -->
+    <header class="w-full px-6 lg:px-8 py-5 lg:py-8 flex justify-between items-center z-50 fixed top-0 left-0 bg-dark/80 backdrop-blur-md border-b border-white/5 transition-all duration-500">
+        <div class="brand-logo flex items-center gap-1" data-purpose="brand-logo">
+            <a href="event.html" class="text-xl font-black leading-none tracking-tighter hover:scale-105 transition-transform cursor-pointer">
+                CONNECT<br/><span class="text-brand">SPHERE</span>
+            </a>
+        </div>
+        <nav class="flex items-center gap-4 lg:gap-10 text-[9px] md:text-xs overflow-x-auto whitespace-nowrap px-4 py-2 hidden sm:flex">
+            <a class="nav-link uppercase" href="event.html#upcoming-events">Events</a>
+            <a class="nav-link uppercase" href="event.html#featured-speakers">Speakers</a>
+            <a class="nav-link uppercase" href="networking.html">Networking</a>
+            <a class="nav-link uppercase" href="contact.html">Contact Us</a>
+        </nav>
+        <div class="cta-nav flex gap-4 items-center">
+            <a href="contact.html">
+                <button class="glow-btn border border-white/20 px-6 py-2 text-xs font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-all duration-300 hidden sm:block">
+                    Save My Spot
+                </button>
+            </a>
+        </div>
+    </header>
+    <!-- END: Navigation -->
+
+    <!-- BEGIN: Main Login Content -->
+    <main class="flex-grow flex items-center justify-center pt-32 pb-24 px-6 relative z-10">
+        <div class="w-full max-w-md reveal brutalist-card p-10 lg:p-14 relative bg-dark/40 backdrop-blur-xl shadow-2xl">
+            <!-- Decorative corner pieces -->
+            <div class="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-brand"></div>
+            <div class="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-brand"></div>
+            
+            <div class="text-center mb-10">
+                <h1 class="text-4xl md:text-5xl font-black uppercase tracking-tighter leading-none mb-3">
+                    WELCOME<br/><span class="text-brand">BACK</span>
+                </h1>
+                <p class="text-xs uppercase tracking-[0.2em] font-bold text-white/40">Enter your credentials to continue</p>
+            </div>
+
+            <form class="flex flex-col gap-6" action="event.html" method="get">
+                <div class="flex flex-col gap-2 relative">
+                    <label for="email" class="text-[0.65rem] font-bold tracking-[0.3em] text-white/50 uppercase">Email Address</label>
+                    <input type="email" id="email" required placeholder="you@company.com" class="brutalist-input w-full px-5 py-4 text-sm font-medium text-white placeholder-white/20 rounded-none focus:ring-0">
+                </div>
+
+                <div class="flex flex-col gap-2 relative">
+                    <div class="flex justify-between items-center">
+                        <label for="password" class="text-[0.65rem] font-bold tracking-[0.3em] text-white/50 uppercase">Password</label>
+                        <a href="#" class="text-[0.65rem] font-bold tracking-[0.1em] text-brand hover:text-white transition-colors uppercase">Forgot?</a>
+                    </div>
+                    <input type="password" id="password" required placeholder="••••••••" class="brutalist-input w-full px-5 py-4 text-sm font-medium text-white placeholder-white/20 rounded-none focus:ring-0">
+                </div>
+
+                <button type="submit" class="glow-btn bg-white text-black font-black py-4 px-8 mt-4 text-lg uppercase tracking-widest hover:bg-brand hover:text-white transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:shadow-[0_0_30px_rgba(255,95,31,0.4)] w-full relative z-20">
+                    Sign In
+                </button>
+            </form>
+
+            <div class="mt-8 pt-8 border-t border-white/10 text-center">
+                <p class="text-xs text-white/60 font-medium">New to Connect Sphere? <a href="#" class="text-brand font-bold uppercase tracking-widest ml-2 hover:text-white transition-colors pb-1 border-b border-brand hover:border-white">Create Account</a></p>
+            </div>
+            
+            <!-- Quick Login Options -->
+            <div class="mt-8 flex flex-col gap-4">
+                <p class="text-[0.65rem] font-bold tracking-[0.3em] text-white/30 uppercase text-center mb-2">Or continue with</p>
+                <div class="grid grid-cols-2 gap-4">
+                    <button type="button" class="border border-white/10 hover:border-white/40 py-3 flex items-center justify-center gap-2 hover:bg-white/5 transition-all">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                        <span class="text-xs font-bold uppercase tracking-widest">Google</span>
+                    </button>
+                    <button type="button" class="border border-white/10 hover:border-white/40 py-3 flex items-center justify-center gap-2 hover:bg-white/5 transition-all">
+                        <span class="material-symbols-outlined text-[1rem]">person</span>
+                        <span class="text-xs font-bold uppercase tracking-widest">Guest</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- END: Main Login Content -->
+
+    <!-- BEGIN: Ambient Background Canvas -->
+    <canvas class="fixed inset-0 pointer-events-none mix-blend-screen transition-opacity duration-1000 z-0" style="filter: blur(100px); opacity: 0.4;" id="ambientCanvas"></canvas>
+    <!-- END: Ambient Background Canvas -->
+
+    <!-- BEGIN: FOOTER -->
+    <footer class="relative z-20 bg-dark pt-16 pb-8 border-t border-white/10 mt-auto">
+      <div class="max-w-[1600px] mx-auto px-8 lg:px-12 flex flex-col md:flex-row justify-between items-center gap-6 text-[0.6rem] uppercase tracking-[0.2em] font-bold text-white/30">
+          <div class="flex items-center gap-3">
+            <svg width="24" height="24" fill="none" stroke="#FF5F1F" viewBox="0 0 40 40" stroke-width="4"><path d="M5 30 L15 5 L25 35 L35 10"></path></svg>
+            <span class="text-sm font-black tracking-tighter text-white">Connect Sphere</span>
+          </div>
+          <div class="flex flex-wrap justify-center gap-8">
+            <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+            <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+          </div>
+          <p>made with love TEAM NET-Y</p>
+      </div>
+    </footer>
+    <!-- END: FOOTER -->
+
+    <script data-purpose="ambient-canvas-effect">
+        // Reused ambient background for consistency with index/event
+        const canvas = document.getElementById('ambientCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        let width, height;
+        function resize() {
+          width = canvas.width = window.innerWidth;
+          height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        let time = 0;
+        const colors = ['#FF5F1F', '#0066FF']; // Brand and Accent
+
+        function animate() {
+          ctx.clearRect(0, 0, width, height);
+          time += 0.002; // Slightly slower for login page context
+
+          for (let j = 0; j < 2; j++) {
+            ctx.beginPath();
+            for (let i = 0; i <= width + 50; i += 50) {
+                const y = height / 2 + 
+                          Math.sin(i * 0.002 + time + j * 3) * (height * 0.5) + 
+                          Math.cos(i * 0.003 - time * 1.8 + j * 0.8) * (height * 0.4);
+                
+                if (i === 0) {
+                  ctx.moveTo(i, y);
+                } else {
+                  ctx.lineTo(i, y);
+                }
+            }
+            ctx.strokeStyle = colors[j];
+            ctx.lineWidth = 150; 
+            ctx.lineCap = 'round';
+            ctx.stroke();
+          }
+          
+          requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>
