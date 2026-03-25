@@ -76,26 +76,21 @@ A kinetic, single-page event platform built with **Next.js 15**, **TypeScript**,
 
 ## 🚀 Planned Features
 
-1. **Real Backend Server**: Local FastAPI/LangGraph implementation for actual booking logic, calendar integration (Google/Outlook API), and data persistence (SQLite/Postgres).
-2. **User Authentication**: Full NextAuth.js/Clerk integration for user profiles, booking history, and personalized recommendations.
-3. **Calendar Synchronization**: Real-time availability checks and booking sync with Google Calendar, Apple Calendar, or iCal.
-4. **Payment Processing**: Stripe integration for paid sessions, workshops, and dynamic pricing based on demand/speaker.
-5. **Speaker Directory**: Searchable database of speakers with bios, availability calendars, ratings, and AI-powered matching.
-6. **Group & Multi-Attendee Bookings**: Support for team bookings, waitlists, and shared calendars.
-7. **Video Conferencing**: Automatic Zoom/Twilio Video links generation post-booking.
-8. **Voice-Enabled Chat**: Web Speech API for hands-free natural language booking.
-9. **Post-Booking Automation**: Email confirmations (Resend), calendar invites, feedback surveys, and follow-up reminders.
-10. **Live Event Dashboard**: Real-time attendee tracking, networking matchmaking (AI similarity scoring), and session status updates.
-11. **Personalized Recommendations**: ML-based session suggestions using past bookings, preferences, and event metadata.
-12. **Multi-Language Support**: AI translation agent for global accessibility.
-13. **Analytics Dashboard**: Organizer tools for booking metrics, conversion rates, revenue tracking.
-14. **PWA & Offline Mode**: Service Worker for offline chat queuing and push notifications.
-15. **AR/VR Session Previews**: WebXR integration to preview event venues/sessions in AR.
-16. **Multi-Agent Workflow**: LangGraph agents for parallel tasks (availability + payment + confirmation).
-17. **Social Sharing**: Share booking links, generate QR codes for check-ins.
-18. **Waitlist & Notifications**: SMS/Email alerts when preferred slots open up.
-19. **Feedback & Ratings**: Post-session reviews influencing future recommendations.
-20. **Admin Panel**: Event organizers manage speakers, slots, and pricing via dashboard.
+1. **Payment Processing**: Stripe integration for paid sessions, workshops, and dynamic pricing based on demand/speaker.
+2. **Speaker Directory**: Searchable database of speakers with bios, availability calendars, ratings, and AI-powered matching.
+3. **Group & Multi-Attendee Bookings**: Support for team bookings, waitlists, and shared calendars.
+4. **Video Conferencing**: Automatic Zoom/Twilio Video links generation post-booking.
+5. **Post-Booking Automation**: Email confirmations (Resend), calendar invites, feedback surveys, and follow-up reminders.
+6. **Live Event Dashboard**: Real-time attendee tracking, networking matchmaking (AI similarity scoring), and session status updates.
+7. **Personalized Recommendations**: ML-based session suggestions using past bookings, preferences, and event metadata.
+8. **Multi-Language Support**: AI translation agent for global accessibility.
+9. **Analytics Dashboard**: Organizer tools for booking metrics, conversion rates, revenue tracking.
+10. **AR/VR Session Previews**: WebXR integration to preview event venues/sessions in AR.
+11. **Multi-Agent Workflow**: LangGraph agents for parallel tasks (availability + payment + confirmation).
+12. **Social Sharing**: Share booking links, generate QR codes for check-ins.
+13. **Waitlist & Notifications**: SMS/Email alerts when preferred slots open up.
+14. **Feedback & Ratings**: Post-session reviews influencing future recommendations.
+15. **Admin Panel**: Event organizers manage speakers, slots, and pricing via dashboard.
 
 ## 💻 Getting Started
 
