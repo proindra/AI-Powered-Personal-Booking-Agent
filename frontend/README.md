@@ -21,7 +21,7 @@ A kinetic, single-page event platform built with **Next.js 15**, **TypeScript**,
 ## Project Structure
 
 ```
-connectsphere-next/
+frontend/
 ├── app/
 │   ├── events/page.tsx        # Main single-page site (all sections)
 │   ├── signin/page.tsx        # Sign in page
@@ -68,7 +68,7 @@ The site is designed as a **single-page experience**. All sections live on `/eve
 ### 1. Install dependencies
 
 ```bash
-cd connectsphere-next
+cd frontend
 npm install
 ```
 
