@@ -11,6 +11,8 @@
   --animate-float-subtle: floatSubtle 8s ease-in-out infinite;
   --animate-glow-pulse: glowPulse 3s ease-in-out infinite;
   --animate-breathe: breathe 10s ease-in-out infinite;
+  --animate-marquee: marquee 25s linear infinite;
+  --animate-marquee-fast: marquee 12s linear infinite;
 
   --keyframes-floatSubtle: {
     "0%, 100%" { transform: translateY(0) rotate(0deg); }
@@ -24,6 +26,10 @@
     "0%, 100%" { transform: translate(0,0) scale(1); }
     "33%" { transform: translate(5px,-10px) scale(1.05); }
     "66%" { transform: translate(-5px,5px) scale(0.95); }
+  };
+  --keyframes-marquee: {
+    "0%" { transform: translateX(0); }
+    "100%" { transform: translateX(-50%); }
   };
 }
 
@@ -185,6 +191,32 @@ body {
   100% { transform: translateX(-50%); }
 }
 
+.marquee-container {
+  overflow: hidden;
+  white-space: nowrap;
+  position: relative;
+}
+
+.marquee-content {
+  display: inline-block;
+  animation: marquee 25s linear infinite;
+  will-change: transform;
+}
+
+.marquee-fast {
+  animation: marquee 12s linear infinite;
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes carousel-flow {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
 @keyframes floatSubtle {
   0%, 100% { transform: translateY(0) rotate(0deg); }
   50% { transform: translateY(-15px) rotate(1deg); }
@@ -204,6 +236,24 @@ body {
 @keyframes typingBounce {
   0%, 60%, 100% { transform: translateY(0); }
   30% { transform: translateY(-6px); }
+}
+
+.speaker-strip {
+  transform: skewY(-2deg);
+}
+
+.speaker-item {
+  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.speaker-item img {
+  transform: skewY(2deg);
+  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.speaker-item:hover {
+  transform: scale(1.1) translateY(-20px);
+  z-index: 50;
 }
 
 
