@@ -8,17 +8,10 @@
   --color-accent: #0066ff;
   --font-sans: "Epilogue", sans-serif;
 
-  --animate-carousel-flow: carousel-flow 30s linear infinite;
   --animate-float-subtle: floatSubtle 8s ease-in-out infinite;
   --animate-glow-pulse: glowPulse 3s ease-in-out infinite;
   --animate-breathe: breathe 10s ease-in-out infinite;
-  --animate-marquee: marquee 25s linear infinite;
-  --animate-marquee-fast: marquee 12s linear infinite;
 
-  --keyframes-carousel-flow: {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-  };
   --keyframes-floatSubtle: {
     "0%, 100%" { transform: translateY(0) rotate(0deg); }
     "50%" { transform: translateY(-15px) rotate(1deg); }
@@ -31,10 +24,6 @@
     "0%, 100%" { transform: translate(0,0) scale(1); }
     "33%" { transform: translate(5px,-10px) scale(1.05); }
     "66%" { transform: translate(-5px,5px) scale(0.95); }
-  };
-  --keyframes-marquee: {
-    "0%" { transform: translateX(0); }
-    "100%" { transform: translateX(-50%); }
   };
 }
 
@@ -191,27 +180,6 @@ body {
 .delay-4 { transition-delay: 0.38s; }
 .delay-5 { transition-delay: 0.48s; }
 
-.marquee-container {
-  overflow: hidden;
-  white-space: nowrap;
-  position: relative;
-}
-
-.marquee-content {
-  display: inline-block;
-  animation: marquee 25s linear infinite;
-  will-change: transform;
-}
-
-.marquee-fast {
-  animation: marquee 12s linear infinite;
-}
-
-@keyframes marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
 @keyframes carousel-flow {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
@@ -238,23 +206,6 @@ body {
   30% { transform: translateY(-6px); }
 }
 
-.speaker-strip {
-  transform: skewY(-2deg);
-}
-
-.speaker-item {
-  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.speaker-item img {
-  transform: skewY(2deg);
-  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.speaker-item:hover {
-  transform: scale(1.08) translateY(-20px);
-  z-index: 50;
-}
 
 .breathe-pod {
   animation: breathe 10s ease-in-out infinite;
@@ -314,16 +265,6 @@ body {
   transition: border-color 0.6s ease, box-shadow 0.6s ease;
 }
 
-/* Smooth image hover zoom */
-.img-zoom {
-  overflow: hidden;
-}
-.img-zoom img {
-  transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-.img-zoom:hover img {
-  transform: scale(1.06);
-}
 
 /* Staggered children animation */
 .stagger-children > * {
