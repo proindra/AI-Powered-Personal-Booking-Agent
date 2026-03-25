@@ -30,11 +30,12 @@ function smoothScrollToHash(hash: string) {
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect(() => {
-    setIsLoggedIn(!!getSession());
-  }, []);
+  // Read synchronously to avoid flash — lazy useState initializer runs before first render
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false;
+    const token = localStorage.getItem('auth_token');
+    return !!(token && token !== '');
+  });
 
   function handleLogoClick(e: React.MouseEvent) {
     e.preventDefault();
@@ -97,6 +98,7 @@ export default function Navbar() {
       {/* CTA */}
       <div className="cta-nav flex gap-4 items-center">
         <UserAvatar />
+        {/* Show Sign In when not logged in, or while checking (null) */}
         {!isLoggedIn && (
           <Link href="/signin" className="nav-link text-[10px] sm:text-xs">
             Sign In
