@@ -9,6 +9,8 @@ const goto = (path: string) => {
   window.location.href = base + path;
 };
 
+const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? '';
+
 export default function SignInForm() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -30,6 +32,10 @@ export default function SignInForm() {
   });
 
   const handleGoogleClick = () => {
+    if (!GOOGLE_CLIENT_ID) {
+      setError('Google sign-in is not configured.');
+      return;
+    }
     setError('');
     setLoading(true);
     googleLogin();
