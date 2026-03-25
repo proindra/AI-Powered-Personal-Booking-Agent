@@ -7,7 +7,7 @@ const goto = (path: string) => {
   window.location.href = base + path;
 };
 
-const CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? '';
+const CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? '218443770951-d7jp3365valg1bcjagl1hdka1kpqk5qa.apps.googleusercontent.com';
 
 declare global {
   interface Window {
