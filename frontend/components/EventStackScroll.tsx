@@ -72,17 +72,17 @@ export default function EventStackScroll() {
       style={{ height: `${(events.length + 1) * 100}vh` }}
       className="relative"
     >
-      <div className="sticky top-0 h-screen flex flex-col justify-center overflow-hidden bg-dark">
+      <div className="sticky top-0 h-screen flex flex-col pt-24 md:pt-32 lg:pt-40 overflow-hidden bg-dark">
 
         {/* Heading */}
         <div className="max-w-7xl mx-auto px-8 w-full mb-8 flex-shrink-0">
-          <h2 className="text-5xl md:text-7xl lg:text-9xl font-black uppercase tracking-tighter text-center leading-none">
+          <h2 className="text-4xl md:text-6xl lg:text-8xl font-black uppercase tracking-tighter text-center leading-none">
             UPCOMING EVENTS
           </h2>
         </div>
 
         {/* Card stack */}
-        <div className="relative max-w-7xl mx-auto px-8 w-full flex-1 min-h-0" style={{ maxHeight: "58vh" }}>
+        <div className="relative max-w-7xl mx-auto px-8 w-full flex-1 min-h-0" style={{ maxHeight: "50vh" }}>
           {events.map((ev, i) => {
             // How far into this card's scroll window are we (0 = not started, 1 = fully covered by next)
             const cardStart = i * perCard;
