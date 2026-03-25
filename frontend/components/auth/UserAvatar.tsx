@@ -49,9 +49,6 @@ export default function UserAvatar() {
             <span className="material-symbols-outlined text-sm text-brand">person</span>
           </div>
         )}
-        <span className="hidden md:block text-xs font-bold uppercase tracking-widest text-white/70 max-w-[100px] truncate">
-          {profile.name.split(' ')[0]}
-        </span>
       </button>
 
       {open && (
