@@ -33,6 +33,7 @@
   };
 }
 
+/* ── Base ─────────────────────────────────────────── */
 body {
   background-color: #0e0e0e;
   color: #ffffff;
@@ -41,15 +42,14 @@ body {
   scrollbar-width: none;
 }
 
-::-webkit-scrollbar {
-  display: none;
-}
+::-webkit-scrollbar { display: none; }
 
 .material-symbols-outlined {
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
   font-family: "Material Symbols Outlined";
 }
 
+/* ── Navbar ───────────────────────────────────────── */
 .nav-link {
   letter-spacing: 0.1em;
   font-size: 0.75rem;
@@ -70,7 +70,8 @@ body {
   transition: width 0.3s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.nav-link:hover {
+.nav-link:hover,
+.nav-link.active-section {
   color: #ff5f1f;
 }
 
@@ -79,17 +80,13 @@ body {
   width: 100%;
 }
 
-.nav-link.active-section {
-  color: #ff5f1f;
-}
-
-/* Navbar shrink on scroll */
 .navbar-shrunk {
   padding-top: 0.75rem !important;
   padding-bottom: 0.75rem !important;
   background: rgba(255,255,255,0.08) !important;
 }
 
+/* ── Cards & Buttons ──────────────────────────────── */
 .brutalist-card {
   border: 1px solid rgba(255, 255, 255, 0.1);
   transition: border-color 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94),
@@ -117,20 +114,14 @@ body {
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(
-    circle,
-    rgba(255, 255, 255, 0.2) 0%,
-    transparent 70%
-  );
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
   opacity: 0;
   transition: opacity 0.3s;
 }
 
-.glow-btn:hover::after {
-  opacity: 1;
-}
+.glow-btn:hover::after { opacity: 1; }
 
-/* === REVEAL SYSTEM === */
+/* ── Reveal / ScrollEffects ───────────────────────── */
 .reveal {
   opacity: 0;
   transform: translateY(40px);
@@ -138,22 +129,13 @@ body {
               transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform, opacity;
 }
-.reveal.active {
-  opacity: 1;
-  transform: translateY(0);
-}
 
-/* Directional reveal variants */
 .reveal-left {
   opacity: 0;
   transform: translateX(-50px);
   transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
               transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform, opacity;
-}
-.reveal-left.active {
-  opacity: 1;
-  transform: translateX(0);
 }
 
 .reveal-right {
@@ -163,10 +145,6 @@ body {
               transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform, opacity;
 }
-.reveal-right.active {
-  opacity: 1;
-  transform: translateX(0);
-}
 
 .reveal-scale {
   opacity: 0;
@@ -175,10 +153,12 @@ body {
               transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
   will-change: transform, opacity;
 }
-.reveal-scale.active {
-  opacity: 1;
-  transform: scale(1);
-}
+
+.reveal.active,
+.reveal-left.active,
+.reveal-right.active { opacity: 1; transform: none; }
+
+.reveal-scale.active { opacity: 1; transform: scale(1); }
 
 .delay-1 { transition-delay: 0.08s; }
 .delay-2 { transition-delay: 0.18s; }
@@ -186,11 +166,20 @@ body {
 .delay-4 { transition-delay: 0.38s; }
 .delay-5 { transition-delay: 0.48s; }
 
-@keyframes carousel-flow {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+.stagger-children > * {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
+.stagger-children.active > *:nth-child(1) { opacity:1; transform:none; transition-delay: 0.05s; }
+.stagger-children.active > *:nth-child(2) { opacity:1; transform:none; transition-delay: 0.12s; }
+.stagger-children.active > *:nth-child(3) { opacity:1; transform:none; transition-delay: 0.19s; }
+.stagger-children.active > *:nth-child(4) { opacity:1; transform:none; transition-delay: 0.26s; }
+.stagger-children.active > *:nth-child(5) { opacity:1; transform:none; transition-delay: 0.33s; }
+.stagger-children.active > *:nth-child(6) { opacity:1; transform:none; transition-delay: 0.40s; }
 
+/* ── Marquee ──────────────────────────────────────── */
 .marquee-container {
   overflow: hidden;
   white-space: nowrap;
@@ -203,44 +192,10 @@ body {
   will-change: transform;
 }
 
-.marquee-fast {
-  animation: marquee 12s linear infinite;
-}
+.marquee-fast { animation-duration: 12s; }
 
-@keyframes marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-@keyframes carousel-flow {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-@keyframes floatSubtle {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-15px) rotate(1deg); }
-}
-
-@keyframes glowPulse {
-  0%, 100% { filter: drop-shadow(0 0 15px rgba(255,95,31,0.4)); transform: scale(1); }
-  50% { filter: drop-shadow(0 0 35px rgba(255,95,31,0.7)); transform: scale(1.02); }
-}
-
-@keyframes breathe {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  33% { transform: translate(5px, -10px) scale(1.05); }
-  66% { transform: translate(-5px, 5px) scale(0.95); }
-}
-
-@keyframes typingBounce {
-  0%, 60%, 100% { transform: translateY(0); }
-  30% { transform: translateY(-6px); }
-}
-
-.speaker-strip {
-  transform: skewY(-2deg);
-}
+/* ── Speaker Strip ────────────────────────────────── */
+.speaker-strip { transform: skewY(-2deg); }
 
 .speaker-item {
   transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -256,29 +211,16 @@ body {
   z-index: 50;
 }
 
+/* ── Ambient / Network pods ───────────────────────── */
+.breathe-pod { animation: breathe 10s ease-in-out infinite; }
 
-.breathe-pod {
-  animation: breathe 10s ease-in-out infinite;
-}
-
-@keyframes lineFlow {
-  to { stroke-dashoffset: -2000; }
-}
-
+/* ── Neon path (ExploreTech) ──────────────────────── */
 .neon-path {
   stroke-dasharray: 600 300;
   animation: lineFlow 10s linear infinite;
 }
 
-.animate-float-subtle {
-  animation: floatSubtle 8s ease-in-out infinite;
-}
-
-.animate-glow-pulse {
-  animation: glowPulse 3s ease-in-out infinite;
-}
-
-/* Chat UI styles */
+/* ── Chat UI ──────────────────────────────────────── */
 .chat-bubble-user {
   background: #ff5f1f;
   color: #000;
@@ -291,41 +233,59 @@ body {
   border-radius: 18px 18px 18px 4px;
 }
 
-.typing-dot {
-  animation: typingBounce 1.2s ease-in-out infinite;
-}
-
+.typing-dot { animation: typingBounce 1.2s ease-in-out infinite; }
 .typing-dot:nth-child(2) { animation-delay: 0.2s; }
 .typing-dot:nth-child(3) { animation-delay: 0.4s; }
 
-/* === PAGE & SECTION TRANSITIONS === */
-@keyframes fadeInPage {
-  from { opacity: 0; transform: translateY(16px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
+/* ── Page enter ───────────────────────────────────── */
+.page-enter { animation: fadeInPage 0.6s cubic-bezier(0.22, 1, 0.36, 1) both; }
 
-.page-enter {
-  animation: fadeInPage 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-
-/* Section border glow on scroll into view */
+/* ── Section glow ─────────────────────────────────── */
 .section-active-glow {
   border-color: rgba(255, 95, 31, 0.2) !important;
   box-shadow: 0 0 80px rgba(255, 95, 31, 0.04);
   transition: border-color 0.6s ease, box-shadow 0.6s ease;
 }
 
+/* ── Utility classes (Tailwind can't cover these) ──── */
+.animate-float-subtle { animation: floatSubtle 8s ease-in-out infinite; }
+.animate-glow-pulse   { animation: glowPulse 3s ease-in-out infinite; }
 
-/* Staggered children animation */
-.stagger-children > * {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
-              transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+/* ── Keyframes ────────────────────────────────────── */
+@keyframes marquee {
+  to { transform: translateX(-50%); }
 }
-.stagger-children.active > *:nth-child(1) { opacity:1; transform:translateY(0); transition-delay: 0.05s; }
-.stagger-children.active > *:nth-child(2) { opacity:1; transform:translateY(0); transition-delay: 0.12s; }
-.stagger-children.active > *:nth-child(3) { opacity:1; transform:translateY(0); transition-delay: 0.19s; }
-.stagger-children.active > *:nth-child(4) { opacity:1; transform:translateY(0); transition-delay: 0.26s; }
-.stagger-children.active > *:nth-child(5) { opacity:1; transform:translateY(0); transition-delay: 0.33s; }
-.stagger-children.active > *:nth-child(6) { opacity:1; transform:translateY(0); transition-delay: 0.40s; }
+
+@keyframes carousel-flow {
+  to { transform: translateX(-50%); }
+}
+
+@keyframes floatSubtle {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%       { transform: translateY(-15px) rotate(1deg); }
+}
+
+@keyframes glowPulse {
+  0%, 100% { filter: drop-shadow(0 0 15px rgba(255,95,31,0.4)); transform: scale(1); }
+  50%       { filter: drop-shadow(0 0 35px rgba(255,95,31,0.7)); transform: scale(1.02); }
+}
+
+@keyframes breathe {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(5px, -10px) scale(1.05); }
+  66%       { transform: translate(-5px, 5px) scale(0.95); }
+}
+
+@keyframes typingBounce {
+  0%, 60%, 100% { transform: translateY(0); }
+  30%            { transform: translateY(-6px); }
+}
+
+@keyframes fadeInPage {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes lineFlow {
+  to { stroke-dashoffset: -2000; }
+}
