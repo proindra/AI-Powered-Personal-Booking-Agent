@@ -14,6 +14,12 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "lh3.googleusercontent.com" },
     ],
   },
+  turbopack: {},
+  webpack(config) {
+    // Required for @react-three/rapier WASM (used when running with --webpack)
+    config.experiments = { ...config.experiments, asyncWebAssembly: true };
+    return config;
+  },
 };
 
 export default nextConfig;

@@ -11,6 +11,8 @@ A kinetic, single-page event platform built with **Next.js 15**, **TypeScript**,
 | Framework | Next.js 15 (App Router) |
 | Language | TypeScript |
 | Styling | Tailwind CSS v4 |
+| 3D Engine | Three.js / React Three Fiber |
+| Physics | React Three Rapier |
 | Fonts | Epilogue (Google Fonts) |
 | Icons | Material Symbols Outlined |
 | Smooth Scroll | Lenis |
@@ -57,6 +59,7 @@ A kinetic, single-page event platform built with **Next.js 15**, **TypeScript**,
 
 ## 🚀 Key Features
 
+- **3D Interactive Lanyard**: A physics-based, draggable 3D lanyard featuring a real-time reactive ribbon and the website's favicon.
 - **Kinetic Single-Page UX**: Seamless transitions between sections via smooth inertia scrolling.
 - **AI-Powered Booking**: Real-time natural language scheduling via LangGraph.
 - **Brutalist Aesthetic**: High-impact typography and custom-built kinetic animations.
