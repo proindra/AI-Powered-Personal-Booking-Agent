@@ -1,7 +1,7 @@
 'use client';
 
-import { useGoogleLogin } from '@react-oauth/google';
-import { useState } from 'react';
+import { GoogleOAuthProvider, useGoogleLogin } from '@react-oauth/google';
+import { useState, useEffect } from 'react';
 
 // Static export safe navigation
 const goto = (path: string) => {
@@ -12,6 +12,17 @@ const goto = (path: string) => {
 const GOOGLE_CLIENT_ID = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? '';
 
 export default function SignInForm() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  if (!mounted) return null; // skip SSR entirely
+
+  return GOOGLE_CLIENT_ID
+    ? <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}><SignInFormInner /></GoogleOAuthProvider>
+    : <SignInFormInner />;
+}
+
+function SignInFormInner() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
