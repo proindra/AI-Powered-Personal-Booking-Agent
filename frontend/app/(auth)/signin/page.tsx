@@ -1,4 +1,4 @@
-import SignInForm from '@/components/SignInForm';
+import SignInForm from '@/components/auth/SignInForm';
 import LanyardLoader from '@/components/LanyardLoader';
 
 export default function SignInPage() {
