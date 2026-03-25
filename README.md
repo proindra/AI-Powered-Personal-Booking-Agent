@@ -46,62 +46,59 @@ frontend/
 
 ---
 
-## Pages & Sections
+## Connect Sphere - Personal Booking Agent
 
-The site is designed as a **single-page experience**. All sections live on `/events` and are accessible via smooth scroll from the navbar:
+Connect Sphere is a premium, AI-powered personal booking and networking platform. It features a stunning brutalist design aesthetic built with Next.js, Tailwind CSS, and Framer Motion.
 
-1. **Hero** — Speaker strip, marquee, Save My Spot CTA
-2. **Would Be Useful For** — Staggered card grid
-3. **Upcoming Events** — Scroll-stack animation (4 events)
-4. **Featured Speakers** — Speaker cards with booking links
-5. **Events Reel** — Auto-scrolling carousel
-6. **Networking** — Hero, bento grid features, CTA
-7. **AI Booking** — LangGraph-powered chat agent
-8. **Contact** — Floating label form + global presence map
-9. **Trusted By Leaders** — Animated breathing pod network
-10. **Explore Tech Today** — Typewriter + animated SVG
+## 🚀 Key Features
+
+- **Single-Page Experience**: All core sections (Events, Networking, AI Booking, Contact) are accessible on the main page via smooth kinetic scrolling.
+- **AI-Powered Booking**: Integrates a LangGraph-powered intelligent agent for natural language session booking.
+- **Brutalist Design**: High-impact typography, dark mode, kinetic animations, and glassmorphism.
+- **Responsive Layout**: Pixel-perfect alignment across mobile, tablet, and desktop devices.
+- **Interactive UI**: Stack-scrolling event transitions, hover-responsive networking cards, and floating ambient background effects.
+
+## 🛠️ Tech Stack
+
+- **Framework**: Next.js 15 (App Router)
+- **Styling**: Tailwind CSS (with bespoke brutalist utilities)
+- **Animations**: Framer Motion & CSS custom keyframes
+- **Icons**: Google Material Symbols
+- **Typography**: Epilogue (Google Fonts)
+
+## 📁 Project Structure
+
+```text
+/
+├── frontend/             # Next.js Application Root
+│   ├── app/              # App Router Pages & Styles
+│   ├── components/       # Reusable React Components
+│   ├── public/           # Static Brand Assets
+│   └── package.json      # Dependencies & Scripts
+├── .github/              # GitHub Actions (Deployment)
+└── README.md             # Project Documentation
+```
+
+## 💻 Getting Started
+
+1. **Clone the repository**
+2. **Setup Frontend**
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
+3. **Build for Production**
+   ```bash
+   npm run build
+   ```
+
+## 🌐 Deployment
+
+The project is configured for automated deployment to **GitHub Pages** via GitHub Actions. Any push to the `main` branch triggers a build and deploy cycle.
 
 ---
-
-## Getting Started
-
-### 1. Install dependencies
-
-```bash
-cd frontend
-npm install
-```
-
-### 2. Set up environment variables
-
-```bash
-cp .env.local.example .env.local
-```
-
-Edit `.env.local`:
-
-```env
-LANGGRAPH_API_URL=http://localhost:8000
-LANGGRAPH_API_KEY=your_api_key_here   # optional
-```
-
-### 3. Run the development server
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000)
-
----
-
-## AI Booking Agent
-
-The booking feature proxies requests to a **LangGraph FastAPI** backend.
-
-- Without a backend connected, it falls back to a **mock streaming response** for demo purposes
-- To connect your backend, set `LANGGRAPH_API_URL` in `.env.local`
-- The API route is at `app/api/booking/route.ts`
+*Made with love by TEAM NET-Y*
 
 ---
 
