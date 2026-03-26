@@ -5,6 +5,127 @@ import { getSession, AuthSession } from '@/lib/auth/types';
 import { goto } from '@/lib/auth/config';
 import LanyardLoader from '@/components/LanyardLoader';
 import Link from 'next/link';
+import { useCalendar } from '@/lib/calendar/useCalendar';
+import { requestCalendarAccess } from '@/lib/auth/google';
+
+// ─── Calendar Events Panel ────────────────────────────────────────────────────
+
+function CalendarPanel() {
+  const { events, loading, error, connected, refetch } = useCalendar();
+  const [requesting, setRequesting] = useState(false);
+
+  const handleConnect = () => {
+    setRequesting(true);
+    requestCalendarAccess(
+      () => {
+        setRequesting(false);
+        refetch();
+      },
+      (msg) => {
+        setRequesting(false);
+        if (msg) alert(msg);
+      }
+    );
+  };
+
+  const formatDate = (dt: { dateTime?: string; date?: string }) => {
+    const raw = dt.dateTime ?? dt.date;
+    if (!raw) return '';
+    const d = new Date(raw);
+    return d.toLocaleString('en-IN', {
+      weekday: 'short', month: 'short', day: 'numeric',
+      hour: dt.dateTime ? '2-digit' : undefined,
+      minute: dt.dateTime ? '2-digit' : undefined,
+    });
+  };
+
+  return (
+    <div className="brutalist-card p-5 lg:p-6 relative overflow-hidden w-full mt-4 flex flex-col min-h-[140px]">
+      <span className="font-bold text-brand text-[9px] tracking-[0.2em] uppercase mb-3 flex items-center gap-2">
+        <span className="material-symbols-outlined text-[12px]">calendar_month</span>
+        Google Calendar
+        {connected && !loading && !error && (
+          <span className="ml-auto text-[#71717a] normal-case tracking-normal font-normal">
+            {events.length} event{events.length !== 1 ? 's' : ''}
+          </span>
+        )}
+      </span>
+
+      {!connected ? (
+        <div className="flex-1 flex flex-col items-center justify-center py-4 text-center">
+          <p className="text-[#71717a] text-[10px] uppercase tracking-wider mb-4">Connect to sync your sessions</p>
+          <button
+            onClick={handleConnect}
+            disabled={requesting}
+            className="w-full py-3 px-4 bg-white/5 border border-white/10 text-white text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-brand hover:text-black hover:border-brand transition-all flex items-center justify-center gap-2 group"
+          >
+            {requesting ? (
+              <span className="w-3 h-3 border-2 border-black/20 border-t-black rounded-full animate-spin" />
+            ) : (
+              <>
+                CONNECT CALENDAR
+                <span className="material-symbols-outlined text-[14px] group-hover:translate-x-1 transition-transform">api</span>
+              </>
+            )}
+          </button>
+        </div>
+      ) : (
+        <>
+          {/* Loading skeleton */}
+          {loading && (
+            <div className="space-y-2 mt-2">
+              {[1, 2].map((i) => (
+                <div key={i} className="h-12 bg-white/5 rounded animate-pulse" />
+              ))}
+            </div>
+          )}
+
+          {/* Error state */}
+          {!loading && error && (
+            <div className="flex items-start gap-2 text-red-400 text-xs mt-2 p-3 bg-red-500/10 border border-red-500/20 rounded">
+              <span className="material-symbols-outlined text-[14px] shrink-0 mt-0.5">error</span>
+              <span>{error}</span>
+            </div>
+          )}
+
+          {/* Empty state */}
+          {!loading && !error && events.length === 0 && (
+            <div className="text-center text-[#71717a] text-xs py-6 flex flex-col items-center gap-2">
+              <span className="material-symbols-outlined text-2xl opacity-40">event_busy</span>
+              No upcoming events
+            </div>
+          )}
+
+          {/* Events list */}
+          {!loading && !error && events.length > 0 && (
+            <div className="space-y-2 mt-2 max-h-[180px] overflow-y-auto pr-1" style={{ scrollbarWidth: 'none' }}>
+              {events.map((ev) => (
+                <a
+                  key={ev.id}
+                  href={ev.htmlLink ?? '#'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block bg-dark/60 border border-white/5 hover:border-brand/30 hover:bg-brand/5 transition-all p-3 rounded group/ev"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <span className="text-white text-xs font-semibold line-clamp-1 group-hover/ev:text-brand transition-colors">
+                      {ev.summary || '(No title)'}
+                    </span>
+                    <span className="material-symbols-outlined text-[11px] text-[#71717a] group-hover/ev:text-brand shrink-0 transition-colors">
+                      open_in_new
+                    </span>
+                  </div>
+                  <p className="text-[#71717a] text-[10px] mt-1">{formatDate(ev.start)}</p>
+                </a>
+              ))}
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
+
 
 export default function ProfilePage() {
   const [session, setSession] = useState<AuthSession | null>(null);
@@ -98,8 +219,11 @@ export default function ProfilePage() {
               </div>
             </div>
 
+            {/* Calendar Events */}
+            <CalendarPanel />
+
             {/* Actions */}
-            <div className="shrink-0 mt-auto pt-2">
+            <div className="shrink-0 mt-4 pt-2">
               <Link
                 href="/"
                 className="w-full glow-btn bg-brand text-black font-black uppercase tracking-[0.2em] text-[10px] py-4 px-6 hover:bg-white hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 text-center shadow-[0_0_30px_rgba(255,95,31,0.3)]"
