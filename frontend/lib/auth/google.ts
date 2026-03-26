@@ -38,7 +38,7 @@ export const signInWithGoogle = (
   loadGoogleScript().then(() => {
     const client = window.google.accounts.oauth2.initTokenClient({
       client_id: GOOGLE_CLIENT_ID,
-      scope: 'email profile',
+      scope: 'email profile https://www.googleapis.com/auth/calendar',
       callback: async (response: any) => {
         if (response.error) { onError('Google sign-in failed.'); return; }
         try {
