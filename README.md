@@ -138,6 +138,7 @@ The project is configured for automated deployment to **GitHub Pages** via GitHu
 
 ## 🛠️ Project Evolution & Cleanup
 
+- **Performance Optimization**: Implemented Next.js `dynamic` imports to lazy-load heavy interactive and 3D components (like `EventStackScroll`), significantly improving initial page load speed and TTFB.
 - **CSS Deduplication**: Removed ~30% redundant CSS, collapsed repeating @keyframes, and unified active reveal states.
 - **Font Optimization**: Switched from double-loading (CSS @import + link) to a single high-priority `<link>` for Material Symbols.
 - **Component Scaling**: Refined the 3D Lanyard texture mapping to prevent logo overflow and improved material visibility in dark mode.
