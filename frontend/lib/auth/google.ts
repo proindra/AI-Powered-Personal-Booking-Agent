@@ -41,7 +41,7 @@ export const signInWithGoogle = (
   loadGoogleScript().then(() => {
     const client = window.google.accounts.oauth2.initTokenClient({
       client_id: GOOGLE_CLIENT_ID,
-      scope: 'email profile https://www.googleapis.com/auth/calendar.events',
+      scope: 'email profile',
       callback: async (response: any) => {
         if (response.error) { onError('Google sign-in failed.'); return; }
         try {
@@ -113,6 +113,7 @@ export interface CalendarEventDetails {
   end: string;   // ISO string
 }
 
+/** Helper function to create a calendar event directly from the browser */
 export const createGoogleCalendarEvent = async (
   accessToken: string,
   event: CalendarEventDetails
