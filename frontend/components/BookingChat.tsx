@@ -1,6 +1,8 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import { getPath } from "@/utils/paths";
+import { getSession } from "@/lib/auth/types";
+import { createGoogleCalendarEvent, CalendarEventDetails } from "@/lib/auth/google";
 
 interface Message {
   role: "user" | "assistant";
@@ -43,6 +45,46 @@ export default function BookingChat({ initialPrompt, onPromptUsed }: BookingChat
       scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
     }
   }, [messages, loading]);
+
+  // Simplified logic to detect a "booking success" from the AI.
+  // In a real app, the backend would return structured JSON (function calling) to trigger this.
+  const handleCalendarSync = async (text: string) => {
+    // Look for a trigger phrase in the AI response to simulate booking success
+    if (text.includes("Booking confirmed for") || text.includes("I have scheduled your session")) {
+      const session = getSession();
+      if (session?.type === 'google' && session.token) {
+        setMessages(prev => [...prev, { role: "assistant", content: "Syncing with your Google Calendar..." }]);
+
+        // Mocking event details since we don't have structured data from the LLM
+        // In a real scenario, this would come from the agent's function call response
+        const mockEvent: CalendarEventDetails = {
+          summary: "Connect Sphere Session",
+          description: "Your booked session via Connect Sphere AI.",
+          // Create an event for tomorrow
+          start: new Date(Date.now() + 86400000).toISOString(),
+          end: new Date(Date.now() + 90000000).toISOString(),
+        };
+
+        const result = await createGoogleCalendarEvent(session.token, mockEvent);
+        if (result.success && result.link) {
+          setMessages(prev => [...prev, {
+            role: "assistant",
+            content: `Event successfully added to your Google Calendar! [View Event](${result.link})`
+          }]);
+        } else {
+          setMessages(prev => [...prev, {
+            role: "assistant",
+            content: "I couldn't sync the event to your Google Calendar. Make sure you granted Calendar permissions when signing in."
+          }]);
+        }
+      } else if (!session) {
+        setMessages(prev => [...prev, {
+          role: "assistant",
+          content: "Your booking is confirmed, but you need to be signed in to sync it to your calendar."
+        }]);
+      }
+    }
+  };
 
   const send = async () => {
     const text = input.trim();
@@ -99,6 +141,12 @@ export default function BookingChat({ initialPrompt, onPromptUsed }: BookingChat
           }
         }
       }
+
+      // Trigger calendar sync after stream is fully done
+      if (aiContent) {
+        await handleCalendarSync(aiContent);
+      }
+
     } catch {
       setMessages((prev) => [
         ...prev,

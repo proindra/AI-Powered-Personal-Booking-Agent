@@ -38,7 +38,7 @@ export const signInWithGoogle = (
   loadGoogleScript().then(() => {
     const client = window.google.accounts.oauth2.initTokenClient({
       client_id: GOOGLE_CLIENT_ID,
-      scope: 'email profile',
+      scope: 'email profile https://www.googleapis.com/auth/calendar.events',
       callback: async (response: any) => {
         if (response.error) { onError('Google sign-in failed.'); return; }
         try {
@@ -59,4 +59,43 @@ export const signInWithGoogle = (
     });
     client.requestAccessToken();
   });
+};
+
+export interface CalendarEventDetails {
+  summary: string;
+  description: string;
+  start: string; // ISO string
+  end: string;   // ISO string
+}
+
+export const createGoogleCalendarEvent = async (
+  accessToken: string,
+  event: CalendarEventDetails
+): Promise<{ success: boolean; link?: string; error?: string }> => {
+  try {
+    const res = await fetch('https://www.googleapis.com/calendar/v3/calendars/primary/events', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        summary: event.summary,
+        description: event.description,
+        start: {
+          dateTime: event.start,
+        },
+        end: {
+          dateTime: event.end,
+        },
+      }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      return { success: false, error: data.error?.message || 'Failed to create event' };
+    }
+    return { success: true, link: data.htmlLink };
+  } catch (err: any) {
+    return { success: false, error: err.message };
+  }
 };
