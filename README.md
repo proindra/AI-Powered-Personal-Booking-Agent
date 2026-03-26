@@ -45,15 +45,17 @@ A kinetic, single-page event platform built with **Next.js 15**, **TypeScript**,
 ```text
 /
 ├── frontend/             # Next.js Application Root
-│   ├── app/              # App Router (Single-page layout)
-│   │   ├── (main)/page.tsx # THE main page (all sections)
-│   │   ├── (auth)/signin  # Sign-in page
-│   │   ├── api/booking    # AI Agent proxy route
-│   │   └── globals.css    # Branding & Animations
-│   ├── components/       # Reusable Brutalist UI components
-│   ├── public/           # Favicon & Brand Assets
+│   ├── app/              # App Router
+│   │   ├── (main)/page.tsx  # Main landing page (kinetic scroll sections)
+│   │   ├── (auth)/signin    # Sign-in page with 3D Lanyard feature
+│   │   ├── profile/page.tsx # User Profile dashboard with Lanyard integration
+│   │   ├── api/booking      # AI Agent proxy route
+│   │   └── globals.css      # Branding & Animations
+│   ├── components/       # Reusable Brutalist UI & 3D canvas components
+│   ├── lib/auth/         # Authentication logic (Google Auth & Session Storage)
+│   ├── public/           # GLTF models, textures, Favicon & Brand Assets
 │   └── next.config.ts    # Deployment & Path configuration
-├── .github/              # CI/CD Workflows
+├── .github/              # CI/CD Workflows for GitHub Pages deployment
 └── README.md             # Project Documentation
 ```
 
@@ -66,13 +68,13 @@ A kinetic, single-page event platform built with **Next.js 15**, **TypeScript**,
 - **Brutalist Design System**: High-impact typography, custom kinetic animations, and a refined \"clean & neat\" CSS architecture.
 - **Responsive Integrity**: Pixel-perfect layout across all viewports with zero clipping.
 
-## 🚀 Implemented Features (By Pavan)
+## 🚀 Implemented Features
 
-- **Interactive 3D Lanyard (Three.js / GLTF optimization)**
-- **Smooth Kinetic Scrolling UX**
-- **Responsive Design System**
-- **Frontend Booking UI (without backend integration)**
-- **Animation & Micro-interactions**
+- **Interactive 3D Lanyard**: A physics-based, draggable 3D lanyard featuring a reactive ribbon, preloaded GLTF assets, and a beautiful shimmer skeleton loading state. Integrated gracefully into both the sign-in and user profile pages.
+- **Authentication & User Profile**: Google Auth implementation utilizing `localStorage` to manage user sessions seamlessly, complete with a dedicated, responsive user profile dashboard.
+- **Kinetic Single-Page UX**: Seamless transitions between sections via smooth inertia scrolling and reveal animations powered by Lenis.
+- **Frontend Booking UI**: High-impact conversational interfaces and forms tailored for AI booking (awaiting LangGraph backend integration).
+- **Brutalist Design System**: High-impact typography, custom kinetic animations, glassmorphism logic, and responsive CSS architecture maintaining perfection across all viewports.
 
 ## 🚀 Planned Features
 
