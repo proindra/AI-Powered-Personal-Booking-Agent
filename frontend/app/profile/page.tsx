@@ -49,7 +49,7 @@ export default function ProfilePage() {
             <h1 className="font-black text-5xl lg:text-6xl xl:text-7xl uppercase leading-[0.85] tracking-tighter text-white mb-2">
               USER<br /><span className="text-brand">PROFILE</span>
             </h1>
-            <p className="text-white/60 text-xs font-medium leading-relaxed hidden sm:block max-w-[300px]">
+            <p className="text-[#a1a1aa] text-sm leading-relaxed hidden sm:block max-w-[300px]">
               Manage your digital identity via distributed session protocol.
             </p>
           </div>
@@ -71,7 +71,7 @@ export default function ProfilePage() {
                 <h2 className="text-xl lg:text-2xl font-black uppercase tracking-tighter leading-none mb-1 text-white line-clamp-2">
                   {session.profile?.name || 'Guest User'}
                 </h2>
-                <div className="text-[9px] font-bold tracking-[0.2em] text-white/70 uppercase">Identity Confirmed</div>
+                <div className="text-[10px] font-bold tracking-[0.2em] text-[#a1a1aa] uppercase">Identity Confirmed</div>
               </div>
             </div>
 
@@ -83,7 +83,7 @@ export default function ProfilePage() {
                   <span className="material-symbols-outlined text-[12px]">mail</span>
                   Registered Email
                 </span>
-                <p className="relative z-10 text-white text-xs lg:text-sm truncate font-medium">{session.email || session.profile?.email || 'Not Provided'}</p>
+                <p className="relative z-10 text-white text-sm truncate">{session.email || session.profile?.email || 'Not Provided'}</p>
               </div>
 
               <div className="brutalist-card bg-dark/50 border-l-4 border-l-brand p-4 hover:bg-brand/10 transition-colors relative overflow-hidden group/item">
@@ -92,7 +92,7 @@ export default function ProfilePage() {
                   <span className="material-symbols-outlined text-[12px]">shield_person</span>
                   Auth Vector
                 </span>
-                <p className="relative z-10 text-white text-xs lg:text-sm capitalize font-medium flex items-center gap-2">
+                <p className="relative z-10 text-white text-sm capitalize flex items-center gap-2">
                    {session.type} Authentication
                 </p>
               </div>
@@ -126,8 +126,8 @@ export default function ProfilePage() {
 
         {/* Technical Overlays */}
         <div className="absolute top-8 right-8 z-30 pointer-events-none flex flex-col items-end gap-2">
-          <span className="font-bold text-white/40 text-[9px] uppercase tracking-[0.3em] border-b border-white/10 pb-1">Lanyard // Physics Env</span>
-          <span className="font-bold text-white/30 text-[9px] uppercase tracking-[0.3em]">Load state: Complete</span>
+          <span className="font-bold text-[#a1a1aa] text-[10px] uppercase tracking-[0.3em] border-b border-white/10 pb-1">Lanyard // Physics Env</span>
+          <span className="font-bold text-[#71717a] text-[10px] uppercase tracking-[0.3em]">Load state: Complete</span>
         </div>
         
         <div className="absolute bottom-8 left-8 z-30 pointer-events-none flex items-center gap-4">
@@ -135,8 +135,8 @@ export default function ProfilePage() {
              <span className="material-symbols-outlined text-white/50 text-[14px]">360</span>
           </div>
           <div className="flex flex-col">
-            <span className="font-bold text-white/70 text-[9px] uppercase tracking-widest">Interactive Element</span>
-            <span className="font-medium text-brand text-[8px] uppercase tracking-[0.2em] animate-pulse mt-0.5">Drag to rotate object</span>
+            <span className="font-bold text-[#d4d4d8] text-[10px] uppercase tracking-widest">Interactive Element</span>
+            <span className="font-medium text-brand text-[9px] uppercase tracking-[0.2em] animate-pulse mt-0.5">Drag to rotate object</span>
           </div>
         </div>
       </div>
