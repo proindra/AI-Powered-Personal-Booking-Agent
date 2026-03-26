@@ -1,2 +1,8 @@
 {
+  "python.defaultInterpreterPath": "/opt/homebrew/bin/python3",
+  "python.analysis.extraPaths": [
+    "/Users/pavankishorm/Documents/My Projects/AI-Powered-Personal-Booking-Agent/backend"
+  ],
+  "python.analysis.typeCheckingMode": "basic",
+  "python.languageServer": "Pylance"
 }
