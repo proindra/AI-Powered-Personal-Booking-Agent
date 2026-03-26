@@ -55,6 +55,16 @@ export default function BookingChat({ initialPrompt, onPromptUsed }: BookingChat
       if (session?.type === 'google' && session.token) {
         setMessages(prev => [...prev, { role: "assistant", content: "Syncing with your Google Calendar..." }]);
 
+        // Check for calendar_token specifically, as calendar access is requested incrementally
+        const calendarToken = typeof window !== 'undefined' ? localStorage.getItem('calendar_token') : null;
+        if (!calendarToken) {
+          setMessages(prev => [...prev, {
+            role: "assistant",
+            content: "Your booking is confirmed, but I couldn't sync the event to your Google Calendar because you haven't granted Calendar permissions yet. Please connect your calendar from your profile page."
+          }]);
+          return;
+        }
+
         // Mocking event details since we don't have structured data from the LLM
         // In a real scenario, this would come from the agent's function call response
         const mockEvent: CalendarEventDetails = {
@@ -65,7 +75,7 @@ export default function BookingChat({ initialPrompt, onPromptUsed }: BookingChat
           end: new Date(Date.now() + 90000000).toISOString(),
         };
 
-        const result = await createGoogleCalendarEvent(session.token, mockEvent);
+        const result = await createGoogleCalendarEvent(calendarToken, mockEvent);
         if (result.success && result.link) {
           setMessages(prev => [...prev, {
             role: "assistant",
