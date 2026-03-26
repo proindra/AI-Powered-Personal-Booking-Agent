@@ -133,8 +133,72 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false, image }: any) {
 
   const { nodes, materials } = useGLTF(CARD_PATH) as any;
   const faviconTexture = useTexture(ICON_PATH) as THREE.Texture;
-  const userTexture = useTexture(image || ICON_PATH) as THREE.Texture;
+  const userTextureRaw = useTexture(image || ICON_PATH) as THREE.Texture;
   const strapTexture   = useMemo(() => faviconTexture.clone(), [faviconTexture]);
+
+  const [compositeTexture, setCompositeTexture] = useState<THREE.Texture | null>(null);
+
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const canvas = document.createElement('canvas');
+    // The lanyard model maps x=0..0.5 to the front, and x=0.5..1.0 to the back
+    // Let's create a 1024x512 canvas so it can fit two 512x512 squares.
+    canvas.width = 1024;
+    canvas.height = 512;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // Fill background
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    const userImg = userTextureRaw.image as any;
+    const favImg = faviconTexture.image as any;
+
+    // Draw user image on the left half (0-512)
+    if (userImg) {
+      const imgWidth = userImg.width || 512;
+      const imgHeight = userImg.height || 512;
+
+      if (image) {
+        // The original user mapping had: repeat=(1, 0.75), offset=(0, 0.125)
+        const srcH = imgHeight * 0.75;
+        const srcY = imgHeight * 0.125;
+        ctx.drawImage(userImg, 0, srcY, imgWidth, srcH, 0, 0, 512, 512);
+      } else {
+        // Fallback logo: repeat=(1.4, 1.4)
+        const favScale = 1.0 / 1.4; // about 0.714
+        const favSize = 512 * favScale;
+        const favOffset = (512 - favSize) / 2;
+        ctx.drawImage(userImg, favOffset, favOffset, favSize, favSize);
+      }
+    }
+
+    // Draw favicon image on the right half (512-1024)
+    if (favImg) {
+      // The original favicon had repeat=(1.4, 1.4), so it was scaled down.
+      const favScale = 1.0 / 1.4; // about 0.714
+      const favSize = 512 * favScale;
+      const favOffset = (512 - favSize) / 2;
+      ctx.drawImage(favImg, 512 + favOffset, favOffset, favSize, favSize);
+    }
+
+    const newTex = new THREE.CanvasTexture(canvas);
+    newTex.flipY = false;
+    newTex.colorSpace = THREE.SRGBColorSpace;
+    newTex.wrapS = THREE.ClampToEdgeWrapping;
+    newTex.wrapT = THREE.ClampToEdgeWrapping;
+    newTex.minFilter = THREE.LinearFilter;
+    newTex.magFilter = THREE.LinearFilter;
+    newTex.anisotropy = 16;
+    newTex.needsUpdate = true;
+
+    setCompositeTexture(newTex);
+
+    return () => {
+      newTex.dispose();
+    };
+  }, [userTextureRaw, faviconTexture, image]);
 
   useMemo(() => {
     faviconTexture.flipY = false;
@@ -147,31 +211,12 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false, image }: any) {
     faviconTexture.anisotropy = 16;
     faviconTexture.needsUpdate = true;
 
-    if (image) {
-      userTexture.flipY = false;
-      userTexture.repeat.set(1, 0.75); // Cropping a 1:1 image onto a portrait card
-      userTexture.offset.set(0, 0.125);
-      userTexture.center.set(0.5, 0.5);
-      userTexture.wrapS = userTexture.wrapT = THREE.ClampToEdgeWrapping;
-      userTexture.colorSpace = THREE.SRGBColorSpace;
-      userTexture.needsUpdate = true;
-    } else {
-      userTexture.repeat.set(1.4, 1.4);
-      userTexture.offset.set(-0.2, -0.2);
-      userTexture.center.set(0.5, 0.5);
-      userTexture.wrapS = userTexture.wrapT = THREE.ClampToEdgeWrapping;
-      userTexture.minFilter = THREE.LinearFilter;
-      userTexture.magFilter = THREE.LinearFilter;
-      userTexture.anisotropy = 16;
-      userTexture.needsUpdate = true;
-    }
-
     strapTexture.repeat.set(2, 2);
     strapTexture.wrapS = strapTexture.wrapT = THREE.RepeatWrapping;
     strapTexture.minFilter = THREE.LinearFilter;
     strapTexture.magFilter = THREE.LinearFilter;
     strapTexture.anisotropy = 16;
-  }, [faviconTexture, userTexture, strapTexture, image]);
+  }, [faviconTexture, strapTexture]);
 
   const [curve]   = useState(() => new THREE.CatmullRomCurve3([new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()]));
   const [dragged, drag]   = useState<false | THREE.Vector3>(false);
@@ -235,7 +280,7 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false, image }: any) {
             <mesh geometry={nodes.card.geometry}>
               <meshPhysicalMaterial
                 color="#ffffff"
-                map={userTexture}
+                map={compositeTexture || faviconTexture}
                 map-anisotropy={16}
                 clearcoat={1}
                 clearcoatRoughness={0.15}
