@@ -48,6 +48,14 @@ export const signInWithGoogle = (
           onError('Failed to fetch profile.');
         }
       },
+      error_callback: (err: any) => {
+        // Fired when popup is closed or blocked
+        if (err.type === 'popup_closed' || err.type === 'popup_failed_to_open') {
+          onError('');  // empty string = no error message, just stop spinner
+        } else {
+          onError('Google sign-in failed.');
+        }
+      },
     });
     client.requestAccessToken();
   });

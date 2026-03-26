@@ -30,12 +30,13 @@ function smoothScrollToHash(hash: string) {
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
-  // Read synchronously to avoid flash — lazy useState initializer runs before first render
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => {
-    if (typeof window === 'undefined') return false;
+  // Always start as false (matches SSR) — read localStorage after mount to avoid hydration mismatch
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+
+  useEffect(() => {
     const token = localStorage.getItem('auth_token');
-    return !!(token && token !== '');
-  });
+    setIsLoggedIn(!!(token && token !== ''));
+  }, []);
 
   function handleLogoClick(e: React.MouseEvent) {
     e.preventDefault();

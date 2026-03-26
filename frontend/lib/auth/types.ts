@@ -1,4 +1,4 @@
-export type AuthType = 'google' | 'guest' | 'email';
+export type AuthType = 'google' | 'guest';
 
 export interface UserProfile {
   name: string;
