@@ -29,6 +29,9 @@ export const fetchGoogleProfile = async (accessToken: string): Promise<UserProfi
   };
 };
 
+/** Sign in with Google — uses only non-sensitive scopes (email + profile).
+ *  No "unverified app" warning. Calendar access is requested separately.
+ */
 export const signInWithGoogle = (
   onSuccess: (token: string, profile: UserProfile) => void,
   onError: (msg: string) => void
@@ -38,7 +41,7 @@ export const signInWithGoogle = (
   loadGoogleScript().then(() => {
     const client = window.google.accounts.oauth2.initTokenClient({
       client_id: GOOGLE_CLIENT_ID,
-      scope: 'email profile https://www.googleapis.com/auth/calendar',
+      scope: 'email profile',
       callback: async (response: any) => {
         if (response.error) { onError('Google sign-in failed.'); return; }
         try {
@@ -49,9 +52,8 @@ export const signInWithGoogle = (
         }
       },
       error_callback: (err: any) => {
-        // Fired when popup is closed or blocked
         if (err.type === 'popup_closed' || err.type === 'popup_failed_to_open') {
-          onError('');  // empty string = no error message, just stop spinner
+          onError('');
         } else {
           onError('Google sign-in failed.');
         }
@@ -59,4 +61,47 @@ export const signInWithGoogle = (
     });
     client.requestAccessToken();
   });
+};
+
+/** Request Google Calendar access separately (incremental authorization).
+ *  This triggers its own consent popup — only email+profile users who
+ *  want calendar features need to go through this extra step.
+ *  Stores the calendar-scoped token in localStorage as 'calendar_token'.
+ */
+export const requestCalendarAccess = (
+  onSuccess: () => void,
+  onError: (msg: string) => void
+) => {
+  if (!GOOGLE_CLIENT_ID) { onError('Google sign-in is not configured.'); return; }
+
+  loadGoogleScript().then(() => {
+    const client = window.google.accounts.oauth2.initTokenClient({
+      client_id: GOOGLE_CLIENT_ID,
+      scope: 'https://www.googleapis.com/auth/calendar',
+      callback: (response: any) => {
+        if (response.error) { onError('Calendar access denied.'); return; }
+        localStorage.setItem('calendar_token', response.access_token);
+        onSuccess();
+      },
+      error_callback: (err: any) => {
+        if (err.type === 'popup_closed' || err.type === 'popup_failed_to_open') {
+          onError('');
+        } else {
+          onError('Failed to get calendar access.');
+        }
+      },
+    });
+    client.requestAccessToken();
+  });
+};
+
+/** Returns true if the user has granted Calendar access */
+export const hasCalendarAccess = (): boolean => {
+  if (typeof window === 'undefined') return false;
+  return !!localStorage.getItem('calendar_token');
+};
+
+/** Removes the stored calendar token (e.g. on sign-out) */
+export const clearCalendarToken = () => {
+  localStorage.removeItem('calendar_token');
 };

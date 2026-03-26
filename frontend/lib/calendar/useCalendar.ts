@@ -37,10 +37,13 @@ const CALENDAR_API =
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-/** Reads the Google access token stored in localStorage by the GIS auth flow */
-const getStoredToken = (): string | null => {
+/**
+ * Reads the calendar-specific token stored by requestCalendarAccess().
+ * This is separate from the main auth_token so sign-in stays clean.
+ */
+const getCalendarToken = (): string | null => {
   if (typeof window === 'undefined') return null;
-  return localStorage.getItem('auth_token');
+  return localStorage.getItem('calendar_token');
 };
 
 // ─── Hook ─────────────────────────────────────────────────────────────────────
@@ -49,6 +52,7 @@ interface UseCalendarReturn {
   events: CalendarEvent[];
   loading: boolean;
   error: string | null;
+  connected: boolean;
   refetch: () => void;
   createEvent: (event: NewCalendarEvent) => Promise<CalendarEvent | null>;
   creating: boolean;
@@ -57,26 +61,26 @@ interface UseCalendarReturn {
 /**
  * useCalendar — fetches and manages Google Calendar events.
  *
- * Calls the Google Calendar API directly from the browser using the GIS
- * access token stored in localStorage. This is required for static exports
- * (GitHub Pages) where no server-side API routes are available.
- *
- * Google Calendar API fully supports CORS for browser requests.
+ * Uses the 'calendar_token' from localStorage (granted separately via
+ * requestCalendarAccess()). The main sign-in uses only email+profile,
+ * so there is no "unverified app" warning on sign-in.
  */
 export function useCalendar(): UseCalendarReturn {
   const [events, setEvents] = useState<CalendarEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
+  const [connected, setConnected] = useState(false);
 
   const fetchEvents = useCallback(async () => {
-    const token = getStoredToken();
+    const token = getCalendarToken();
     if (!token) {
-      setError('Not authenticated. Please sign in first.');
+      setConnected(false);
       setLoading(false);
       return;
     }
 
+    setConnected(true);
     setLoading(true);
     setError(null);
 
@@ -93,6 +97,11 @@ export function useCalendar(): UseCalendarReturn {
       const data = await res.json();
 
       if (!res.ok) {
+        // Token may have expired — clear it so user can reconnect
+        if (res.status === 401) {
+          localStorage.removeItem('calendar_token');
+          setConnected(false);
+        }
         throw new Error(data.error?.message ?? 'Failed to load calendar events.');
       }
 
@@ -110,9 +119,9 @@ export function useCalendar(): UseCalendarReturn {
 
   const createEvent = useCallback(
     async (event: NewCalendarEvent): Promise<CalendarEvent | null> => {
-      const token = getStoredToken();
+      const token = getCalendarToken();
       if (!token) {
-        setError('Not authenticated.');
+        setError('Calendar not connected.');
         return null;
       }
 
@@ -144,5 +153,5 @@ export function useCalendar(): UseCalendarReturn {
     []
   );
 
-  return { events, loading, error, refetch: fetchEvents, createEvent, creating };
+  return { events, loading, error, connected, refetch: fetchEvents, createEvent, creating };
 }
