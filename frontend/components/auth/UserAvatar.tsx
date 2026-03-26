@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { getSession, clearSession } from '@/lib/auth/types';
 import { goto } from '@/lib/auth/config';
+import Link from 'next/link';
 
 export default function UserAvatar() {
   const [profile, setProfile] = useState<{ name: string; email: string; picture: string } | null>(null);
@@ -60,6 +61,15 @@ export default function UserAvatar() {
               <p className="text-[0.65rem] text-white/40 truncate mt-0.5">{profile.email}</p>
             )}
           </div>
+          {/* Profile link */}
+          <Link
+            href="/profile"
+            onClick={() => setOpen(false)}
+            className="w-full text-left px-4 py-2.5 text-xs font-bold uppercase tracking-widest text-white/60 hover:text-white hover:bg-white/5 transition-all flex items-center gap-2 border-b border-white/10"
+          >
+            <span className="material-symbols-outlined text-sm">person</span>
+            View Profile
+          </Link>
           {/* Sign out */}
           <button
             onClick={handleSignOut}
