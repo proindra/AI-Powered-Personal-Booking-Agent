@@ -100,13 +100,13 @@ export default function ProfilePage() {
 
             {/* Actions */}
             <div className="shrink-0 mt-auto pt-2">
-              <a
+              <Link
                 href="/"
                 className="w-full glow-btn bg-brand text-black font-black uppercase tracking-[0.2em] text-[10px] py-4 px-6 hover:bg-white hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 text-center shadow-[0_0_30px_rgba(255,95,31,0.3)]"
               >
                 RETURN TO DIRECTORY
                 <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
-              </a>
+              </Link>
             </div>
           </div>
         </div>

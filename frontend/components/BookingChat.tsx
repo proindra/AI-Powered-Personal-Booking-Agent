@@ -31,6 +31,7 @@ export default function BookingChat({ initialPrompt, onPromptUsed }: BookingChat
     }
   }, [initialPrompt, onPromptUsed]);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const isFirstRender = useRef(true);
 
   useEffect(() => {
@@ -38,7 +39,9 @@ export default function BookingChat({ initialPrompt, onPromptUsed }: BookingChat
       isFirstRender.current = false;
       return;
     }
-    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
+    }
   }, [messages, loading]);
 
   const send = async () => {
@@ -131,7 +134,7 @@ export default function BookingChat({ initialPrompt, onPromptUsed }: BookingChat
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-4 scrollbar-hide">
+      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-6 py-6 space-y-4 scrollbar-hide">
         {messages.map((msg, i) => (
           <div
             key={i}
