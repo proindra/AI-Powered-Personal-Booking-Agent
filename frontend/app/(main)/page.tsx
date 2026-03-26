@@ -1,9 +1,14 @@
 "use client";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import ExploreTechSection from "@/components/ExploreTechSection";
 import TrustedByLeaders from "@/components/TrustedByLeaders";
 import BookingPageClient from "@/components/BookingPageClient";
-import EventStackScroll from "@/components/EventStackScroll";
+
+const EventStackScroll = dynamic(() => import("@/components/EventStackScroll"), {
+  ssr: false,
+  loading: () => <div className="h-screen bg-dark flex items-center justify-center text-white/50 text-xs font-mono uppercase tracking-widest">Loading Events...</div>
+});
 
 const speakers = [
   { name: "Lionel Messi", img: "https://upload.wikimedia.org/wikipedia/commons/b/b4/Lionel-Messi-Argentina-2022-FIFA-World-Cup_%28cropped%29.jpg", delay: "0s" },
