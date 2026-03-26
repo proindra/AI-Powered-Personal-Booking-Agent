@@ -137,6 +137,7 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false, image }: any) {
   const strapTexture   = useMemo(() => faviconTexture.clone(), [faviconTexture]);
 
   useMemo(() => {
+    faviconTexture.flipY = false;
     faviconTexture.repeat.set(1.4, 1.4);
     faviconTexture.offset.set(-0.2, -0.2);
     faviconTexture.center.set(0.5, 0.5);
@@ -147,6 +148,7 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false, image }: any) {
     faviconTexture.needsUpdate = true;
 
     if (image) {
+      userTexture.flipY = false;
       userTexture.repeat.set(1, 0.75); // Cropping a 1:1 image onto a portrait card
       userTexture.offset.set(0, 0.125);
       userTexture.center.set(0.5, 0.5);
