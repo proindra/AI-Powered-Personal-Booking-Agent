@@ -18,12 +18,12 @@ const Lanyard = dynamic(() => import('./Lanyard'), {
   loading: () => null,
 });
 
-export default function LanyardLoader() {
+export default function LanyardLoader({ image }: { image?: string }) {
   return (
     <ErrorBoundary>
       <Suspense fallback={null}>
         <div style={{ position: 'absolute', inset: 0 }}>
-          <Lanyard position={[0, 0, 20]} gravity={[0, -40, 0]} fov={20} />
+          <Lanyard position={[0, 0, 20]} gravity={[0, -40, 0]} fov={20} image={image} />
         </div>
       </Suspense>
     </ErrorBoundary>

@@ -25,7 +25,7 @@ export const fetchGoogleProfile = async (accessToken: string): Promise<UserProfi
   return {
     name: data.name,
     email: data.email,
-    picture: data.picture,
+    picture: data.picture?.replace('=s96-c', '=s400-c') || data.picture,
   };
 };
 

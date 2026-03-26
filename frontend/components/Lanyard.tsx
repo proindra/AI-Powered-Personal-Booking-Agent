@@ -40,6 +40,7 @@ interface LanyardProps {
   position?: [number, number, number];
   gravity?: [number, number, number];
   fov?: number;
+  image?: string;
 }
 
 /** Animated shimmer shown while the 3D scene loads */
@@ -79,7 +80,7 @@ function LanyardSkeleton() {
   );
 }
 
-export default function Lanyard({ position = [0, 0, 30], gravity = [0, -40, 0], fov = 20 }: LanyardProps) {
+export default function Lanyard({ position = [0, 0, 30], gravity = [0, -40, 0], fov = 20, image }: LanyardProps) {
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768);
@@ -100,7 +101,7 @@ export default function Lanyard({ position = [0, 0, 30], gravity = [0, -40, 0], 
         <ambientLight intensity={Math.PI} />
         <Suspense fallback={<LanyardSkeleton />}>
           <Physics gravity={gravity} timeStep={isMobile ? 1 / 30 : 1 / 60}>
-            <Band isMobile={isMobile} />
+            <Band isMobile={isMobile} image={image} />
           </Physics>
           <Environment blur={0.75}>
             <Lightformer intensity={2}  color="white" position={[0, -1, 5]}   rotation={[0, 0, Math.PI / 3]} scale={[100, 0.1, 1]} />
@@ -114,7 +115,7 @@ export default function Lanyard({ position = [0, 0, 30], gravity = [0, -40, 0], 
   );
 }
 
-function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false }) {
+function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false, image }: any) {
   const band  = useRef<any>(null);
   const fixed = useRef<any>(null);
   const j1    = useRef<any>(null);
@@ -131,7 +132,8 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false }) {
   const seg: any = { type: 'dynamic' as RigidBodyProps['type'], canSleep: true, colliders: false, angularDamping: 4, linearDamping: 4 };
 
   const { nodes, materials } = useGLTF(CARD_PATH) as any;
-  const faviconTexture = useTexture(ICON_PATH);
+  const faviconTexture = useTexture(ICON_PATH) as THREE.Texture;
+  const userTexture = useTexture(image || ICON_PATH) as THREE.Texture;
   const strapTexture   = useMemo(() => faviconTexture.clone(), [faviconTexture]);
 
   useMemo(() => {
@@ -144,12 +146,30 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false }) {
     faviconTexture.anisotropy = 16;
     faviconTexture.needsUpdate = true;
 
+    if (image) {
+      userTexture.repeat.set(1, 0.75); // Cropping a 1:1 image onto a portrait card
+      userTexture.offset.set(0, 0.125);
+      userTexture.center.set(0.5, 0.5);
+      userTexture.wrapS = userTexture.wrapT = THREE.ClampToEdgeWrapping;
+      userTexture.colorSpace = THREE.SRGBColorSpace;
+      userTexture.needsUpdate = true;
+    } else {
+      userTexture.repeat.set(1.4, 1.4);
+      userTexture.offset.set(-0.2, -0.2);
+      userTexture.center.set(0.5, 0.5);
+      userTexture.wrapS = userTexture.wrapT = THREE.ClampToEdgeWrapping;
+      userTexture.minFilter = THREE.LinearFilter;
+      userTexture.magFilter = THREE.LinearFilter;
+      userTexture.anisotropy = 16;
+      userTexture.needsUpdate = true;
+    }
+
     strapTexture.repeat.set(2, 2);
     strapTexture.wrapS = strapTexture.wrapT = THREE.RepeatWrapping;
     strapTexture.minFilter = THREE.LinearFilter;
     strapTexture.magFilter = THREE.LinearFilter;
     strapTexture.anisotropy = 16;
-  }, [faviconTexture, strapTexture]);
+  }, [faviconTexture, userTexture, strapTexture, image]);
 
   const [curve]   = useState(() => new THREE.CatmullRomCurve3([new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()]));
   const [dragged, drag]   = useState<false | THREE.Vector3>(false);
@@ -213,7 +233,7 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false }) {
             <mesh geometry={nodes.card.geometry}>
               <meshPhysicalMaterial
                 color="#ffffff"
-                map={faviconTexture}
+                map={userTexture}
                 map-anisotropy={16}
                 clearcoat={1}
                 clearcoatRoughness={0.15}
