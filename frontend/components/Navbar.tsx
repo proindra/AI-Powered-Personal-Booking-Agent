@@ -9,7 +9,6 @@ const links = [
   { href: "/#explore-tech", label: "Explore" },
   { href: "/#useful-for", label: "Useful For" },
   { href: "/#upcoming-events", label: "Upcoming Events" },
-  { href: "/#booking", label: "AI Booking" },
   { href: "/#contact", label: "Contact Us" },
 ];
 

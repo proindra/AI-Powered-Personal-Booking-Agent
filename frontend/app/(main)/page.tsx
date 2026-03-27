@@ -87,8 +87,8 @@ export default function EventsPage() {
 
           {/* Centered Action Buttons */}
           <div className="flex flex-col sm:flex-row justify-center w-full gap-4 px-4 md:px-0">
-            <Link href="/signin" className="group flex items-center justify-center gap-2 bg-brand text-white font-bold uppercase tracking-widest text-xs lg:text-sm px-8 py-3.5 lg:py-4 rounded-full hover:bg-white hover:text-black transition-all duration-300 shadow-[0_0_20px_rgba(0,102,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.6)] hover:-translate-y-1">
-              <span>Get Started</span>
+            <Link href="/booking" className="group flex items-center justify-center gap-2 bg-brand text-white font-bold uppercase tracking-widest text-xs lg:text-sm px-8 py-3.5 lg:py-4 rounded-full hover:bg-white hover:text-black transition-all duration-300 shadow-[0_0_20px_rgba(0,102,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.6)] hover:-translate-y-1">
+              <span>Try AI Booking</span>
               <span className="material-symbols-outlined text-[16px] transition-transform duration-300 group-hover:translate-x-1">arrow_forward</span>
             </Link>
             <Link href="#useful-for" className="flex items-center justify-center bg-white/5 text-white font-bold uppercase tracking-widest text-xs lg:text-sm px-8 py-3.5 lg:py-4 rounded-full hover:bg-white/10 transition-all duration-300 border border-white/10 backdrop-blur-md hover:border-white/30 hover:-translate-y-1">
@@ -125,28 +125,6 @@ export default function EventsPage() {
       {/* UPCOMING EVENTS — SCROLL STACK */}
       <section className="scroll-mt-32" id="upcoming-events">
         <EventStackScroll />
-      </section>
-
-
-
-
-
-
-
-      {/* BOOKING */}
-      <section className="py-24 px-8 border-t border-white/10 scroll-mt-32 reveal" id="booking">
-        <div className="max-w-[1440px] mx-auto">
-          <div className="mb-16 reveal-left">
-            <span className="font-bold text-brand uppercase tracking-[0.3em] text-xs">AI-Powered</span>
-            <h2 className="font-black text-6xl md:text-8xl lg:text-9xl uppercase leading-[0.85] tracking-tighter text-white mt-4 mb-6">
-              BOOK A<br /><span className="text-brand">SESSION</span>
-            </h2>
-            <p className="text-white/60 text-lg max-w-2xl leading-relaxed">
-              Our LangGraph-powered booking agent understands natural language. Just tell it what you need — it handles availability, conflicts, and confirmations.
-            </p>
-          </div>
-          <BookingPageClient />
-        </div>
       </section>
 
       {/* CONTACT */}

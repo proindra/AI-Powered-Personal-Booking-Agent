@@ -133,7 +133,25 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false, image }: any) {
 
   const { nodes, materials } = useGLTF(CARD_PATH) as any;
   const faviconTexture = useTexture(ICON_PATH) as THREE.Texture;
-  const userTextureRaw = useTexture(image || ICON_PATH) as THREE.Texture;
+
+  // Convert the external Google profile URL to a data URL to avoid CORS issues in WebGL
+  const [safeImageUrl, setSafeImageUrl] = useState<string>(ICON_PATH);
+  useEffect(() => {
+    if (!image) { setSafeImageUrl(ICON_PATH); return; }
+    let cancelled = false;
+    fetch(image)
+      .then(r => r.blob())
+      .then(blob => new Promise<string>((res) => {
+        const reader = new FileReader();
+        reader.onload = () => res(reader.result as string);
+        reader.readAsDataURL(blob);
+      }))
+      .then(dataUrl => { if (!cancelled) setSafeImageUrl(dataUrl); })
+      .catch(() => { if (!cancelled) setSafeImageUrl(ICON_PATH); });
+    return () => { cancelled = true; };
+  }, [image]);
+
+  const userTextureRaw = useTexture(safeImageUrl) as THREE.Texture;
   const strapTexture   = useMemo(() => faviconTexture.clone(), [faviconTexture]);
 
   const [compositeTexture, setCompositeTexture] = useState<THREE.Texture | null>(null);
