@@ -7,11 +7,11 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
 
     // Proxy to your LangGraph FastAPI backend
+    // Forward calendar_token if the frontend sent one (Google Calendar access)
     const res = await fetch(`${BACKEND_URL}/chat`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        // Forward auth if needed
         ...(process.env.LANGGRAPH_API_KEY
           ? { Authorization: `Bearer ${process.env.LANGGRAPH_API_KEY}` }
           : {}),

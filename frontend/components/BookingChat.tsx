@@ -106,11 +106,13 @@ export default function BookingChat({ initialPrompt, onPromptUsed }: BookingChat
     setLoading(true);
 
     try {
+      const calendarToken = typeof window !== "undefined" ? localStorage.getItem("calendar_token") : null;
       const res = await fetch(getPath("/api/booking"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           messages: [...messages, userMsg],
+          ...(calendarToken ? { calendar_token: calendarToken } : {}),
         }),
       });
 
