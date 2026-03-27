@@ -16,26 +16,36 @@ from state import AgentState
 from tools import check_availability, suggest_slots, create_booking
 
 # ── LLM setup ────────────────────────────────────────────────────────────────
-# Supports OpenAI (default) or Google Gemini via env var LLM_PROVIDER=gemini
+# Lazy-initialized so the server starts even without an API key (mock mode).
+
+_llm = None
+
 
 def _get_llm():
+    global _llm
+    if _llm is not None:
+        return _llm
+
     provider = os.getenv("LLM_PROVIDER", "openai").lower()
-    if provider == "gemini":
+    openai_key = os.getenv("OPENAI_API_KEY", "")
+    google_key = os.getenv("GOOGLE_API_KEY", "")
+
+    if provider == "gemini" and google_key and not google_key.startswith("your_"):
         from langchain_google_genai import ChatGoogleGenerativeAI
-        return ChatGoogleGenerativeAI(
+        _llm = ChatGoogleGenerativeAI(
             model=os.getenv("GEMINI_MODEL", "gemini-1.5-flash"),
-            google_api_key=os.getenv("GOOGLE_API_KEY"),
+            google_api_key=google_key,
             temperature=0.2,
         )
-    from langchain_openai import ChatOpenAI
-    return ChatOpenAI(
-        model=os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
-        temperature=0.2,
-        api_key=os.getenv("OPENAI_API_KEY"),
-    )
-
-
-llm = _get_llm()
+    elif openai_key and not openai_key.startswith("your_"):
+        from langchain_openai import ChatOpenAI
+        _llm = ChatOpenAI(
+            model=os.getenv("OPENAI_MODEL", "gpt-4o-mini"),
+            temperature=0.2,
+            api_key=openai_key,
+        )
+    # else: returns None → nodes will use rule-based mock fallback
+    return _llm
 
 
 # ── Node 1: Intent Detection ──────────────────────────────────────────────────
@@ -61,22 +71,66 @@ def detect_intent(state: AgentState) -> AgentState:
     user_message = next(
         (m["content"] for m in reversed(state.messages) if m["role"] == "user"), ""
     )
-    history = "\n".join(f"{m['role']}: {m['content']}" for m in state.messages[:-1][-6:])
 
-    from datetime import date
-    prompt = _INTENT_PROMPT.format(
-        today=date.today().isoformat(),
-        history=history or "None",
-        user_message=user_message,
-    )
+    llm = _get_llm()
+    data = {}
 
-    try:
-        raw = llm.invoke([SystemMessage(content=prompt)]).content
-        # Strip markdown code fences if present
-        raw = raw.strip().removeprefix("```json").removeprefix("```").removesuffix("```").strip()
-        data = json.loads(raw)
-    except Exception:
-        data = {}
+    if llm:
+        history = "\n".join(f"{m['role']}: {m['content']}" for m in state.messages[:-1][-6:])
+        from datetime import date
+        prompt = _INTENT_PROMPT.format(
+            today=date.today().isoformat(),
+            history=history or "None",
+            user_message=user_message,
+        )
+        try:
+            raw = llm.invoke([SystemMessage(content=prompt)]).content
+            raw = raw.strip().removeprefix("```json").removeprefix("```").removesuffix("```").strip()
+            data = json.loads(raw)
+        except Exception:
+            data = {}
+    else:
+        # Rule-based mock intent detection (no API key needed)
+        lower = user_message.lower()
+        import re
+        from datetime import date, timedelta
+        today = date.today()
+
+        if any(w in lower for w in ("book", "schedule", "set up", "arrange")):
+            data["intent"] = "book"
+        elif any(w in lower for w in ("reschedule", "move", "change")):
+            data["intent"] = "reschedule"
+        elif any(w in lower for w in ("cancel", "delete", "remove")):
+            data["intent"] = "cancel"
+        elif any(w in lower for w in ("what", "show", "list", "schedule")):
+            data["intent"] = "query"
+        else:
+            data["intent"] = "unknown"
+
+        # Extract date
+        if "tomorrow" in lower:
+            data["date"] = (today + timedelta(days=1)).isoformat()
+        elif "today" in lower:
+            data["date"] = today.isoformat()
+        else:
+            m = re.search(r"(\d{4}-\d{2}-\d{2})", user_message)
+            if m:
+                data["date"] = m.group(1)
+
+        # Extract time (e.g. "3pm", "15:00", "3:30 pm")
+        m = re.search(r"(\d{1,2})(?::(\d{2}))?\s*(am|pm)", lower)
+        if m:
+            hour = int(m.group(1))
+            minute = int(m.group(2) or 0)
+            if m.group(3) == "pm" and hour != 12:
+                hour += 12
+            elif m.group(3) == "am" and hour == 12:
+                hour = 0
+            data["time"] = f"{hour:02d}:{minute:02d}"
+        else:
+            m = re.search(r"(\d{2}):(\d{2})", user_message)
+            if m:
+                data["time"] = f"{m.group(1)}:{m.group(2)}"
 
     return AgentState(
         **{
@@ -175,14 +229,25 @@ def respond(state: AgentState) -> AgentState:
     if state.response:
         return state  # already set by book/conflict nodes
 
-    history = "\n".join(f"{m['role']}: {m['content']}" for m in state.messages[-8:])
-    prompt = _RESPOND_PROMPT.format(
-        date=state.date or "not set",
-        time=state.time or "not set",
-        intent=state.intent,
-        history=history,
-    )
-    reply = llm.invoke([SystemMessage(content=prompt)]).content
+    llm = _get_llm()
+    if llm:
+        history = "\n".join(f"{m['role']}: {m['content']}" for m in state.messages[-8:])
+        prompt = _RESPOND_PROMPT.format(
+            date=state.date or "not set",
+            time=state.time or "not set",
+            intent=state.intent,
+            history=history,
+        )
+        reply = llm.invoke([SystemMessage(content=prompt)]).content
+    else:
+        # Mock fallback when no API key is configured
+        if not state.date:
+            reply = "Sure! What date would you like to book?"
+        elif not state.time:
+            reply = f"Got it — {state.date}. What time works for you?"
+        else:
+            reply = "I can help with that! Could you clarify what you'd like to do?"
+
     return AgentState(**{**state.model_dump(), "response": reply})
 
 
