@@ -45,35 +45,34 @@ export default function EventsPage() {
     <div className="pt-32">
       {/* HERO / INTRO */}
       <section className="py-8 lg:py-12 relative flex flex-col items-center justify-center overflow-hidden z-10 w-full max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 gap-y-6 lg:gap-y-10 min-h-[calc(100vh-140px)]" id="explore-tech">
-        
+
         {/* Decorative Background Glows */}
         <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[250px] h-[250px] sm:w-[400px] sm:h-[400px] bg-brand/10 rounded-full blur-[100px] pointer-events-none z-[-1]"></div>
         <div className="absolute top-1/3 right-1/4 -translate-y-1/2 w-[200px] h-[200px] sm:w-[350px] sm:h-[350px] bg-white/5 rounded-full blur-[80px] pointer-events-none z-[-1]"></div>
 
         {/* Top Row: Logo & Headings */}
         <div className="flex flex-col md:flex-row items-center justify-between w-full gap-8 lg:gap-12 relative z-10">
-          
-          {/* Top Left: Animated SVG Logo (Floating & Glowing) */}
-          <div className="w-full md:w-1/2 flex justify-center order-2 md:order-1 relative group mt-4 md:mt-0">
-            <div className="absolute inset-0 bg-brand/5 blur-[40px] rounded-full opacity-60 transition-opacity duration-700 group-hover:opacity-100 z-[-1]"></div>
-            <svg className="w-full h-auto max-w-[350px] lg:max-w-[420px] animate-float-subtle filter drop-shadow-[0_0_15px_rgba(0,102,255,0.5)]" viewBox="0 0 1000 400">
+
+          {/* Top Left: Animated SVG Logo (Floating) */}
+          <div className="w-full md:w-1/2 flex justify-center order-2 md:order-1 relative mt-4 md:mt-0">
+            <svg className="w-full h-auto max-w-[350px] lg:max-w-[420px] animate-float-subtle" viewBox="0 0 1000 400">
               <path className="neon-path" d="M100,300 L300,50 L500,350 L700,100 L900,300" fill="none" stroke="#0066FF" strokeLinecap="round" strokeLinejoin="round" strokeWidth="60"></path>
             </svg>
           </div>
 
           {/* Top Right: Headings */}
           <div className="w-full md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left order-1 md:order-2">
-            
+
             {/* Pill Badge */}
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-brand/30 bg-brand/5 backdrop-blur-sm mb-4 lg:mb-6">
               <span className="w-2 h-2 rounded-full bg-brand animate-pulse shadow-[0_0_10px_rgba(0,102,255,0.8)]"></span>
               <p className="text-[0.6rem] font-bold tracking-[0.2em] text-brand uppercase">CONNECTSPHERE AI</p>
             </div>
-            
+
             <h2 className="text-4xl md:text-5xl lg:text-[60px] xl:text-[70px] font-black uppercase tracking-tighter leading-[0.95] mb-4">
               ELEVATE YOUR <br className="hidden md:block" />
               <span className="text-brand inline-block min-w-[220px] lg:min-w-[300px]">
-                 <TypeAnimation sequence={['BUSINESS', 3000, 'SCHEDULE', 3000, 'MEETINGS', 3000, 'WORKFLOW', 3000]} wrapper="span" speed={50} repeat={Infinity} cursor={false} />
+                <TypeAnimation sequence={['BUSINESS', 3000, 'SCHEDULE', 3000, 'MEETINGS', 3000, 'WORKFLOW', 3000]} wrapper="span" speed={50} repeat={Infinity} cursor={false} />
               </span>
               <br className="hidden md:block" /> WITH AI
             </h2>
@@ -85,16 +84,16 @@ export default function EventsPage() {
           <p className="text-white/70 text-base md:text-lg lg:text-xl px-4 md:px-0 mb-8 font-light leading-relaxed">
             Experience seamless, intelligent booking. Let our AI assistant manage your calendar, resolve scheduling conflicts, and save you countless hours of back-and-forth emails.
           </p>
-          
+
           {/* Centered Action Buttons */}
           <div className="flex flex-col sm:flex-row justify-center w-full gap-4 px-4 md:px-0">
-             <Link href="/signin" className="group flex items-center justify-center gap-2 bg-brand text-white font-bold uppercase tracking-widest text-xs lg:text-sm px-8 py-3.5 lg:py-4 rounded-full hover:bg-white hover:text-black transition-all duration-300 shadow-[0_0_20px_rgba(0,102,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.6)] hover:-translate-y-1">
-               <span>Get Started</span>
-               <span className="material-symbols-outlined text-[16px] transition-transform duration-300 group-hover:translate-x-1">arrow_forward</span>
-             </Link>
-             <Link href="#useful-for" className="flex items-center justify-center bg-white/5 text-white font-bold uppercase tracking-widest text-xs lg:text-sm px-8 py-3.5 lg:py-4 rounded-full hover:bg-white/10 transition-all duration-300 border border-white/10 backdrop-blur-md hover:border-white/30 hover:-translate-y-1">
-               Learn More
-             </Link>
+            <Link href="/signin" className="group flex items-center justify-center gap-2 bg-brand text-white font-bold uppercase tracking-widest text-xs lg:text-sm px-8 py-3.5 lg:py-4 rounded-full hover:bg-white hover:text-black transition-all duration-300 shadow-[0_0_20px_rgba(0,102,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.6)] hover:-translate-y-1">
+              <span>Get Started</span>
+              <span className="material-symbols-outlined text-[16px] transition-transform duration-300 group-hover:translate-x-1">arrow_forward</span>
+            </Link>
+            <Link href="#useful-for" className="flex items-center justify-center bg-white/5 text-white font-bold uppercase tracking-widest text-xs lg:text-sm px-8 py-3.5 lg:py-4 rounded-full hover:bg-white/10 transition-all duration-300 border border-white/10 backdrop-blur-md hover:border-white/30 hover:-translate-y-1">
+              Learn More
+            </Link>
           </div>
         </div>
       </section>
