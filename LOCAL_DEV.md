@@ -6,102 +6,215 @@ Two terminals — one for the backend, one for the frontend.
 
 ## Prerequisites
 
-| Tool | Minimum Version |
-|---|---|
-| Node.js | 18+ |
-| npm | 9+ |
-| Python | 3.10+ |
+| Tool | Minimum Version | macOS | Windows |
+|---|---|---|---|
+| Node.js | 18+ | [nodejs.org](https://nodejs.org) | [nodejs.org](https://nodejs.org) |
+| npm | 9+ | Bundled with Node.js | Bundled with Node.js |
+| Python | 3.10+ | [python.org](https://www.python.org) or `brew install python` | [python.org](https://www.python.org) — check "Add to PATH" during install |
 
 ---
 
 ## 1. Backend (FastAPI + LangGraph)
 
-### 1a. Create and activate a virtual environment
+### 1a. Navigate to the backend folder
 
+**macOS**
 ```bash
 cd backend
+```
+
+**Windows**
+```powershell
+cd backend
+```
+
+---
+
+### 1b. Create a virtual environment
+
+**macOS**
+```bash
+python3 -m venv .venv
+```
+
+**Windows**
+```powershell
 python -m venv .venv
 ```
 
-```bash
-# macOS / Linux
-source .venv/bin/activate
+---
 
-# Windows
-.venv\Scripts\activate
+### 1c. Activate the virtual environment
+
+**macOS**
+```bash
+source .venv/bin/activate
 ```
 
-### 1b. Install dependencies
+**Windows (Command Prompt)**
+```cmd
+.venv\Scripts\activate.bat
+```
 
+**Windows (PowerShell)**
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+> If PowerShell blocks the script, run this first:
+> ```powershell
+> Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+> ```
+
+---
+
+### 1d. Install dependencies
+
+**macOS**
 ```bash
 pip install -r requirements.txt
 ```
 
-### 1c. Set up environment variables
+**Windows**
+```powershell
+pip install -r requirements.txt
+```
 
+---
+
+### 1e. Set up environment variables
+
+**macOS**
 ```bash
 cp .env.example .env
+```
+
+**Windows (Command Prompt)**
+```cmd
+copy .env.example .env
+```
+
+**Windows (PowerShell)**
+```powershell
+Copy-Item .env.example .env
 ```
 
 Open `.env` and fill in your LLM credentials:
 
 ```env
 # Pick one provider
-LLM_PROVIDER=openai          # or: gemini
+LLM_PROVIDER=gemini          # or: openai
 
-# OpenAI
-OPENAI_API_KEY=sk-...
-OPENAI_MODEL=gpt-4o-mini
-
-# Google Gemini (only if LLM_PROVIDER=gemini)
+# Google Gemini
 GOOGLE_API_KEY=AIza...
 GEMINI_MODEL=gemini-1.5-flash
+
+# OpenAI (only if LLM_PROVIDER=openai)
+OPENAI_API_KEY=sk-...
+OPENAI_MODEL=gpt-4o-mini
 ```
 
-> No API key yet? The agent still runs — it just won't produce intelligent responses.
-> The frontend mock fallback in `/api/booking/route.ts` handles this gracefully.
+> No API key yet? The agent still runs with a rule-based mock fallback — no crash.
 
-### 1d. Start the backend server
+---
 
+### 1f. Start the backend server
+
+**macOS**
 ```bash
+uvicorn main:app --reload --port 8000
+```
+
+**Windows**
+```powershell
 uvicorn main:app --reload --port 8000
 ```
 
 Backend is now live at **http://localhost:8000**
 
 Verify it's running:
+
+**macOS**
 ```bash
 curl http://localhost:8000/health
 # → {"status":"ok"}
+```
+
+**Windows (PowerShell)**
+```powershell
+Invoke-RestMethod http://localhost:8000/health
+# → status : ok
 ```
 
 ---
 
 ## 2. Frontend (Next.js)
 
-### 2a. Install dependencies
+Open a **second terminal** for this.
 
+### 2a. Navigate to the frontend folder
+
+**macOS**
 ```bash
 cd frontend
+```
+
+**Windows**
+```powershell
+cd frontend
+```
+
+---
+
+### 2b. Install dependencies
+
+**macOS**
+```bash
 npm install
 ```
 
-### 2b. Set up environment variables
+**Windows**
+```powershell
+npm install
+```
 
-Create a `.env.local` file inside the `frontend/` directory:
+---
 
+### 2c. Set up environment variables
+
+Create a `.env.local` file inside the `frontend/` directory.
+
+**macOS**
 ```bash
-# frontend/.env.local
+touch .env.local
+```
+
+**Windows (PowerShell)**
+```powershell
+New-Item .env.local -ItemType File
+```
+
+Then open it in any editor and add:
+
+```env
 LANGGRAPH_API_URL=http://localhost:8000
 NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id_here
 ```
 
 > `NEXT_PUBLIC_GOOGLE_CLIENT_ID` is needed for Google Sign-In and Calendar access.
-> You can get one from [Google Cloud Console](https://console.cloud.google.com/) → APIs & Services → Credentials.
+> Get one from [Google Cloud Console](https://console.cloud.google.com/) → APIs & Services → Credentials.
 
-### 2c. Start the dev server
+---
 
+### 2d. Start the dev server
+
+**macOS**
 ```bash
+npm run dev
+```
+
+**Windows**
+```powershell
 npm run dev
 ```
 
@@ -118,7 +231,7 @@ Next.js API Route (proxy)
         ↓  POST /chat
 FastAPI Backend (localhost:8000)
         ↓
-LangGraph Agent
+LangGraph Agent  (Gemini / OpenAI)
         ↓
 Google Calendar API  (if user granted calendar access)
 ```
@@ -140,15 +253,37 @@ Once both servers are running, open **http://localhost:3000**, navigate to the B
 
 ---
 
-## 5. Common Issues
+## 5. Stopping the Servers
+
+Press `Ctrl + C` in each terminal (macOS and Windows).
+
+---
+
+## 6. Common Issues
+
+**`python` not found on macOS**
+- Use `python3` instead of `python`
+- Or install via Homebrew: `brew install python`
+
+**`python` not found on Windows**
+- Reinstall Python from [python.org](https://www.python.org) and check "Add Python to PATH"
+- Or use `py` instead: `py -m venv .venv`
+
+**PowerShell script execution blocked**
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
 
 **Backend won't start**
-- Make sure your virtual environment is activated (`source .venv/bin/activate`)
-- Check that all packages installed without errors (`pip install -r requirements.txt`)
+- Make sure the virtual environment is activated (you should see `(.venv)` in your prompt)
+- Re-run `pip install -r requirements.txt` and check for errors
 
 **"Could not connect to booking agent" in chat**
 - Confirm the backend is running on port 8000
-- Check `LANGGRAPH_API_URL` in `frontend/.env.local` matches the backend URL
+- Check `LANGGRAPH_API_URL` in `frontend/.env.local` is `http://localhost:8000`
+
+**`npm run dev` fails with "next: command not found"**
+- Run `npm install` inside the `frontend/` directory first
 
 **Google Sign-In not working**
 - Ensure `NEXT_PUBLIC_GOOGLE_CLIENT_ID` is set in `frontend/.env.local`
