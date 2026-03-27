@@ -67,22 +67,22 @@ export default function Footer() {
         {/* Links Grid */}
         <div className="px-8 lg:px-12 grid grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           <div className="flex flex-col gap-5">
+            <p className="text-[0.65rem] font-bold tracking-[0.3em] text-white/40 uppercase">Explore</p>
+            <HashLink href="/#explore-tech" className="text-sm font-black uppercase text-white hover:text-brand transition-colors">Business Today</HashLink>
+            <HashLink href="/#useful-for" className="text-sm font-black uppercase text-white hover:text-brand transition-colors">Who We Help</HashLink>
+            <HashLink href="/#explore-tech" className="text-sm font-black uppercase text-white hover:text-brand transition-colors">Take Action</HashLink>
+          </div>
+          <div className="flex flex-col gap-5">
             <p className="text-[0.65rem] font-bold tracking-[0.3em] text-white/40 uppercase">Events</p>
             <HashLink href="/#upcoming-events" className="text-sm font-black uppercase text-white hover:text-brand transition-colors">Upcoming Sessions</HashLink>
             <HashLink href="/#upcoming-events" className="text-sm font-black uppercase text-white hover:text-brand transition-colors">Past Highlights</HashLink>
             <HashLink href="/#upcoming-events" className="text-sm font-black uppercase text-white hover:text-brand transition-colors">Event Calendar</HashLink>
           </div>
           <div className="flex flex-col gap-5">
-            <p className="text-[0.65rem] font-bold tracking-[0.3em] text-white/40 uppercase">Speakers</p>
-            <HashLink href="/#featured-speakers" className="text-sm font-black uppercase text-white hover:text-brand transition-colors">Meet The Experts</HashLink>
-            <HashLink href="/#featured-speakers" className="text-sm font-black uppercase text-white hover:text-brand transition-colors">Speaker Lineup</HashLink>
-            <HashLink href="/#featured-speakers" className="text-sm font-black uppercase text-white hover:text-brand transition-colors">Become A Speaker</HashLink>
-          </div>
-          <div className="flex flex-col gap-5">
-            <p className="text-[0.65rem] font-bold tracking-[0.3em] text-white/40 uppercase">Networking</p>
-            <HashLink href="/#networking" className="text-sm font-black uppercase text-white hover:text-brand transition-colors">Join A Community</HashLink>
-            <HashLink href="/#networking" className="text-sm font-black uppercase text-white hover:text-brand transition-colors">Meetups & Circles</HashLink>
-            <HashLink href="/#networking" className="text-sm font-black uppercase text-white hover:text-brand transition-colors">One-On-One Matching</HashLink>
+            <p className="text-[0.65rem] font-bold tracking-[0.3em] text-white/40 uppercase">AI Booking</p>
+            <HashLink href="/#booking" className="text-sm font-black uppercase text-white hover:text-brand transition-colors">Schedule Session</HashLink>
+            <HashLink href="/#booking" className="text-sm font-black uppercase text-white hover:text-brand transition-colors">LangGraph Agent</HashLink>
+            <HashLink href="/#booking" className="text-sm font-black uppercase text-white hover:text-brand transition-colors">Manage Booking</HashLink>
           </div>
           <div className="flex flex-col gap-5">
             <p className="text-[0.65rem] font-bold tracking-[0.3em] text-white/40 uppercase">Company</p>
@@ -96,7 +96,7 @@ export default function Footer() {
         <div className="px-8 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-12 items-start mb-16">
           <div>
             <div className="flex items-center gap-3 mb-4">
-              <svg width="32" height="32" fill="none" stroke="#FF5F1F" viewBox="0 0 40 40" strokeWidth="4">
+              <svg width="32" height="32" fill="none" stroke="#0066FF" viewBox="0 0 40 40" strokeWidth="4">
                 <path d="M5 30 L15 5 L25 35 L35 10" />
               </svg>
               <span className="text-xl font-black tracking-tighter">Connect Sphere</span>

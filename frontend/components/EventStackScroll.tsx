@@ -174,7 +174,7 @@ export default function EventStackScroll() {
                 style={{
                   width: i === activeIndex ? 24 : 8,
                   height: 8,
-                  background: i === activeIndex ? "#FF5F1F" : "rgba(255,255,255,0.2)",
+                  background: i === activeIndex ? "#0066FF" : "rgba(255,255,255,0.2)",
                 }}
               />
             );

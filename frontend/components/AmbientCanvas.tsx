@@ -20,7 +20,7 @@ export default function AmbientCanvas() {
     resize();
 
     let time = 0;
-    const colors = ["#FF5F1F", "#0066FF"];
+    const colors = ["#0066FF", "#39ff14"];
 
     const animate = () => {
       ctx.clearRect(0, 0, width, height);

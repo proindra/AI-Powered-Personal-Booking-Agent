@@ -46,7 +46,7 @@ export default function ExploreTechSection() {
             className="neon-path"
             d="M100,300 L300,50 L500,350 L700,100 L900,300"
             fill="none"
-            stroke="#FF5F1F"
+            stroke="#0066FF"
             strokeLinecap="round"
             strokeLinejoin="round"
             strokeWidth="60"

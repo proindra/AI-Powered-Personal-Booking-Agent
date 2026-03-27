@@ -6,9 +6,9 @@ import UserAvatar from "@/components/auth/UserAvatar";
 import { getSession } from "@/lib/auth/types";
 
 const links = [
+  { href: "/#explore-tech", label: "Explore" },
+  { href: "/#useful-for", label: "Useful For" },
   { href: "/#upcoming-events", label: "Upcoming Events" },
-  { href: "/#featured-speakers", label: "Speakers" },
-  { href: "/#networking", label: "Networking" },
   { href: "/#booking", label: "AI Booking" },
   { href: "/#contact", label: "Contact Us" },
 ];

@@ -179,7 +179,7 @@ export default function ProfilePage() {
           <div className="brutalist-card p-4 relative overflow-hidden group stagger-children active w-full flex-1 flex flex-col gap-3 min-h-0">
             {/* Avatar Row */}
             <div className="flex items-center gap-4 border-b border-white/10 pb-3 shrink-0">
-              <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-full border border-brand/40 bg-dark overflow-hidden relative shadow-[0_0_20px_rgba(255,95,31,0.15)] shrink-0 group-hover:border-brand transition-colors animate-float-subtle">
+              <div className="w-12 h-12 lg:w-14 lg:h-14 rounded-full border border-brand/40 bg-dark overflow-hidden relative shadow-[0_0_20px_rgba(0, 102, 255,0.15)] shrink-0 group-hover:border-brand transition-colors animate-float-subtle">
                 {session.profile?.picture ? (
                   <img src={session.profile.picture} alt="Profile" className="w-full h-full object-cover transition-transform duration-700 hover:scale-110" referrerPolicy="no-referrer" />
                 ) : (
@@ -226,7 +226,7 @@ export default function ProfilePage() {
             <div className="shrink-0 pt-1">
               <Link
                 href="/"
-                className="w-full glow-btn bg-brand text-black font-black uppercase tracking-[0.2em] text-[9px] py-3 px-4 hover:bg-white hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 text-center shadow-[0_0_30px_rgba(255,95,31,0.3)]"
+                className="w-full glow-btn bg-brand text-black font-black uppercase tracking-[0.2em] text-[9px] py-3 px-4 hover:bg-white hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 text-center shadow-[0_0_30px_rgba(0, 102, 255,0.3)]"
               >
                 RETURN TO DIRECTORY
                 <span className="material-symbols-outlined text-[12px]">arrow_forward</span>
@@ -241,7 +241,7 @@ export default function ProfilePage() {
         {/* Subtle grid and glows */}
         <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
         <div className="absolute inset-0 pointer-events-none mix-blend-overlay opacity-80" style={{ background: 'radial-gradient(ellipse 60% 60% at 50% 40%, rgba(0,102,255,0.08) 0%, transparent 80%)' }} />
-        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] pointer-events-none mix-blend-screen" style={{ background: 'radial-gradient(circle at 80% 80%, rgba(255,95,31,0.05) 0%, transparent 60%)' }} />
+        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] pointer-events-none mix-blend-screen" style={{ background: 'radial-gradient(circle at 80% 80%, rgba(0, 102, 255,0.05) 0%, transparent 60%)' }} />
 
         {/* 3D Canvas */}
         <div className="relative w-full h-full z-20">

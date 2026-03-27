@@ -20,7 +20,7 @@ export default function SignInPage() {
         />
         {/* Orange glow blob */}
         <div className="absolute -bottom-40 -left-40 w-[500px] h-[500px] rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(255,95,31,0.12) 0%, transparent 70%)' }}
+          style={{ background: 'radial-gradient(circle, rgba(0, 102, 255,0.12) 0%, transparent 70%)' }}
         />
         {/* Blue glow blob */}
         <div className="absolute -top-20 right-0 w-[300px] h-[300px] rounded-full pointer-events-none"
@@ -48,7 +48,7 @@ export default function SignInPage() {
             IDEAS<br />
             <span
               style={{
-                background: 'linear-gradient(135deg, #FF5F1F 0%, #FF9A5C 100%)',
+                background: 'linear-gradient(135deg, #0066FF 0%, #FF9A5C 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
               }}
@@ -63,7 +63,7 @@ export default function SignInPage() {
           {/* Social proof strip */}
           <div className="mt-10 flex items-center gap-4">
             <div className="flex -space-x-2">
-              {['#FF5F1F','#0066FF','#34D399','#F59E0B'].map((c, i) => (
+              {['#0066FF','#0066FF','#34D399','#F59E0B'].map((c, i) => (
                 <div
                   key={i}
                   className="w-7 h-7 rounded-full border-2 border-[#0e0e0e] shadow-md"
@@ -97,7 +97,7 @@ export default function SignInPage() {
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            background: 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(255,95,31,0.08) 0%, transparent 70%)',
+            background: 'radial-gradient(ellipse 60% 50% at 50% 50%, rgba(0, 102, 255,0.08) 0%, transparent 70%)',
           }}
         />
 

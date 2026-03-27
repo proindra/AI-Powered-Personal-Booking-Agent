@@ -27,7 +27,7 @@ export default function TrustedByLeaders() {
           {pods.map((pod, i) => (
             <div
               key={i}
-              className={`absolute bg-dark border border-white/10 rounded-full flex items-center justify-center group breathe-pod cursor-pointer shadow-lg transition-all hover:scale-110 ${pod.faint ? "z-0" : "z-10"} ${pod.color === "brand" ? "hover:border-[#FF5F1F]" : "hover:border-[#0066FF]"}`}
+              className={`absolute bg-dark border border-white/10 rounded-full flex items-center justify-center group breathe-pod cursor-pointer shadow-lg transition-all hover:scale-110 ${pod.faint ? "z-0" : "z-10"} ${pod.color === "brand" ? "hover:border-[#0066FF]" : "hover:border-[#0066FF]"}`}
               style={{
                 ...pod.style,
                 width: pod.size,
@@ -43,7 +43,7 @@ export default function TrustedByLeaders() {
                   color: pod.faint ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.4)",
                 }}
                 onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.color = pod.color === "brand" ? "#FF5F1F" : "#0066FF";
+                  (e.currentTarget as HTMLElement).style.color = pod.color === "brand" ? "#0066FF" : "#0066FF";
                 }}
                 onMouseLeave={(e) => {
                   (e.currentTarget as HTMLElement).style.color = pod.faint ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.4)";

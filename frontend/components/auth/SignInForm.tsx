@@ -39,10 +39,10 @@ export default function SignInForm() {
       position: 'relative',
     }}>
       {/* Corner accents */}
-      <span style={{ position:'absolute', top:-1, left:-1, width:20, height:20, borderTop:'2px solid #FF5F1F', borderLeft:'2px solid #FF5F1F' }} />
-      <span style={{ position:'absolute', top:-1, right:-1, width:20, height:20, borderTop:'2px solid #FF5F1F', borderRight:'2px solid #FF5F1F' }} />
-      <span style={{ position:'absolute', bottom:-1, left:-1, width:20, height:20, borderBottom:'2px solid #FF5F1F', borderLeft:'2px solid #FF5F1F' }} />
-      <span style={{ position:'absolute', bottom:-1, right:-1, width:20, height:20, borderBottom:'2px solid #FF5F1F', borderRight:'2px solid #FF5F1F' }} />
+      <span style={{ position:'absolute', top:-1, left:-1, width:20, height:20, borderTop:'2px solid #0066FF', borderLeft:'2px solid #0066FF' }} />
+      <span style={{ position:'absolute', top:-1, right:-1, width:20, height:20, borderTop:'2px solid #0066FF', borderRight:'2px solid #0066FF' }} />
+      <span style={{ position:'absolute', bottom:-1, left:-1, width:20, height:20, borderBottom:'2px solid #0066FF', borderLeft:'2px solid #0066FF' }} />
+      <span style={{ position:'absolute', bottom:-1, right:-1, width:20, height:20, borderBottom:'2px solid #0066FF', borderRight:'2px solid #0066FF' }} />
 
       {/* Header */}
       <div style={{ marginBottom: '2rem' }}>
@@ -51,7 +51,7 @@ export default function SignInForm() {
         </p>
         <h1 style={{ fontSize:'2.5rem', fontWeight:900, textTransform:'uppercase', letterSpacing:'-0.04em', lineHeight:1, marginBottom:'0.5rem' }}>
           WELCOME<br />
-          <span style={{ background:'linear-gradient(135deg,#FF5F1F,#FF9A5C)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent' }}>
+          <span style={{ background:'linear-gradient(135deg,#0066FF,#FF9A5C)', WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent' }}>
             BACK
           </span>
         </h1>
@@ -83,16 +83,16 @@ export default function SignInForm() {
           gap: '0.875rem',
           padding: '1rem 1.25rem',
           marginBottom: '0.75rem',
-          background: loading ? 'rgba(255,95,31,0.08)' : 'rgba(255,95,31,0.06)',
-          border: '1px solid rgba(255,95,31,0.25)',
+          background: loading ? 'rgba(0, 102, 255,0.08)' : 'rgba(0, 102, 255,0.06)',
+          border: '1px solid rgba(0, 102, 255,0.25)',
           color: '#fff',
           cursor: loading ? 'not-allowed' : 'pointer',
           transition: 'all 0.25s',
           opacity: loading ? 0.7 : 1,
           textAlign: 'left',
         }}
-        onMouseEnter={e => { if (!loading) { (e.currentTarget as HTMLElement).style.background = 'rgba(255,95,31,0.14)'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,95,31,0.6)'; } }}
-        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,95,31,0.06)'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,95,31,0.25)'; }}
+        onMouseEnter={e => { if (!loading) { (e.currentTarget as HTMLElement).style.background = 'rgba(0, 102, 255,0.14)'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(0, 102, 255,0.6)'; } }}
+        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(0, 102, 255,0.06)'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(0, 102, 255,0.25)'; }}
       >
         {/* Icon */}
         <span style={{ width:36, height:36, display:'flex', alignItems:'center', justifyContent:'center', background:'rgba(255,255,255,0.05)', flexShrink:0 }}>
@@ -113,7 +113,7 @@ export default function SignInForm() {
             {loading ? 'Signing in…' : 'Continue with Google'}
           </span>
         </span>
-        <span style={{ fontSize:'1rem', color:'rgba(255,95,31,0.6)' }}>→</span>
+        <span style={{ fontSize:'1rem', color:'rgba(0, 102, 255,0.6)' }}>→</span>
       </button>
 
       {/* Guest Button — secondary */}
