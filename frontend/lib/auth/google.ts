@@ -77,7 +77,7 @@ export const requestCalendarAccess = (
   loadGoogleScript().then(() => {
     const client = window.google.accounts.oauth2.initTokenClient({
       client_id: GOOGLE_CLIENT_ID,
-      scope: 'https://www.googleapis.com/auth/calendar',
+      scope: 'https://www.googleapis.com/auth/calendar.events',
       callback: (response: any) => {
         if (response.error) { onError('Calendar access denied.'); return; }
         localStorage.setItem('calendar_token', response.access_token);
