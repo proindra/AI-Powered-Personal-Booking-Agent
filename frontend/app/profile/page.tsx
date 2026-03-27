@@ -42,7 +42,7 @@ function CalendarPanel() {
   };
 
   return (
-    <div className="bg-dark/40 border border-white/5 p-3 relative overflow-hidden w-full flex flex-col flex-1 min-h-0">
+    <div className="bg-dark/40 border border-white/5 p-3 relative w-full flex flex-col flex-1 min-h-[140px] shrink-0">
       <span className="font-bold text-brand text-[8px] tracking-[0.2em] uppercase mb-2 flex items-center gap-1">
         <span className="material-symbols-outlined text-[10px]">calendar_month</span>
         Google Calendar
@@ -156,7 +156,7 @@ export default function ProfilePage() {
     <div className="min-h-screen w-full flex flex-col lg:flex-row bg-dark page-enter overflow-x-hidden">
       
       {/* ── Left: Profile Control Panel ─────────────────── */}
-      <div className="w-full lg:w-[460px] xl:w-[500px] shrink-0 min-h-[100dvh] lg:h-[100dvh] border-r border-white/5 relative flex flex-col pt-20 lg:pt-24 pb-6 px-4 sm:px-8 lg:px-10 overflow-y-auto lg:overflow-hidden">
+      <div className="w-full lg:w-[460px] xl:w-[500px] shrink-0 min-h-[100dvh] lg:h-screen lg:max-h-screen border-r border-white/5 relative flex flex-col pt-20 lg:pt-24 pb-6 px-4 sm:px-8 lg:px-10 overflow-y-auto lg:overflow-hidden">
         {/* Ambient glow */}
         <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-brand/5 rounded-full blur-[100px] pointer-events-none" />
         {/* Subtle dot-grid */}
@@ -246,7 +246,7 @@ export default function ProfilePage() {
         <div className="absolute bottom-0 right-0 w-[500px] h-[500px] pointer-events-none mix-blend-screen" style={{ background: 'radial-gradient(circle at 80% 80%, rgba(255,95,31,0.05) 0%, transparent 60%)' }} />
 
         {/* 3D Canvas */}
-        <div className="relative w-full h-full z-20">
+        <div className="absolute inset-0 z-20">
           <LanyardLoader image={session.profile?.picture} />
         </div>
 
