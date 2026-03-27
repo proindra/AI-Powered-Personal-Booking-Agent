@@ -3,9 +3,11 @@
 import { useEffect, useState } from 'react';
 import { getSession, AuthSession } from '@/lib/auth/types';
 import { goto } from '@/lib/auth/config';
-import LanyardLoader from '@/components/LanyardLoader';
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useCalendar } from '@/lib/calendar/useCalendar';
+
+const LanyardLoader = dynamic(() => import('@/components/LanyardLoader'), { ssr: false });
 import { requestCalendarAccess } from '@/lib/auth/google';
 
 // ─── Calendar Events Panel ────────────────────────────────────────────────────
@@ -151,10 +153,10 @@ export default function ProfilePage() {
   if (!mounted || !session) return null;
 
   return (
-    <div className="fixed inset-0 flex overflow-hidden bg-dark page-enter">
+    <div className="min-h-screen w-full flex flex-col lg:flex-row bg-dark page-enter overflow-x-hidden">
       
       {/* ── Left: Profile Control Panel ─────────────────── */}
-      <div className="w-full lg:w-[460px] xl:w-[500px] shrink-0 h-[100dvh] border-r border-white/5 relative flex flex-col pt-16 lg:pt-20 pb-4 px-4 sm:px-8 lg:px-10 overflow-hidden">
+      <div className="w-full lg:w-[460px] xl:w-[500px] shrink-0 min-h-[100dvh] lg:h-[100dvh] border-r border-white/5 relative flex flex-col pt-20 lg:pt-24 pb-6 px-4 sm:px-8 lg:px-10 overflow-y-auto lg:overflow-hidden">
         {/* Ambient glow */}
         <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-brand/5 rounded-full blur-[100px] pointer-events-none" />
         {/* Subtle dot-grid */}

@@ -4,11 +4,10 @@ import LanyardLoader from '@/components/LanyardLoader';
 export default function SignInPage() {
   return (
     <div
-      className="fixed inset-0 flex flex-col lg:flex-row overflow-hidden"
-      style={{ top: '56px' }}
+      className="min-h-[calc(100vh-56px)] mt-[56px] flex flex-col lg:flex-row bg-dark overflow-x-hidden"
     >
       {/* ── Left: Brand Panel ──────────────────────────── */}
-      <div className="hidden lg:flex lg:w-1/3 xl:w-[400px] 2xl:w-[480px] shrink-0 flex-col justify-between p-10 xl:p-16 relative overflow-hidden border-r border-white/5">
+      <div className="hidden lg:flex lg:w-1/3 xl:w-[400px] 2xl:w-[480px] shrink-0 flex-col justify-between p-10 xl:p-16 relative border-r border-white/5">
         {/* Grid texture overlay */}
         <div
           className="absolute inset-0 pointer-events-none"
