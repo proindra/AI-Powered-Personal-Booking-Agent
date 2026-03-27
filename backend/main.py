@@ -72,11 +72,19 @@ async def chat(req: ChatRequest):
 
     # Run the graph (synchronous compile — wrap in thread for async)
     import asyncio
-    result: AgentState = await asyncio.get_event_loop().run_in_executor(
+    result = await asyncio.get_event_loop().run_in_executor(
         None, lambda: graph.invoke(initial_state)
     )
 
-    response_text = result.response or "I'm not sure how to help with that. Could you rephrase?"
+    # Note: graph.invoke returns a dict representing the state if state is a dict,
+    # but here our state is pydantic-based, but langgraph returns a dict of the final state
+    # Wait, let's safely access the response field.
+    if isinstance(result, dict):
+        response_text = result.get("response", "")
+    else:
+        response_text = getattr(result, "response", "")
+
+    response_text = response_text or "I'm not sure how to help with that. Could you rephrase?"
 
     return StreamingResponse(
         _stream_response(response_text),

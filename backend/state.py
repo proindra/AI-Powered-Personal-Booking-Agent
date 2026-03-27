@@ -6,7 +6,7 @@ import operator
 class AgentState(BaseModel):
     """Shared state that flows through every node in the LangGraph."""
 
-    # Conversation history: list of {"role": "user"|"assistant", "content": "..."}
+    # Conversation history: list of {"role": "user"|"assistant"|"tool", "content": "..."}
     messages: Annotated[list[dict], operator.add] = []
 
     # Extracted intent from the latest user message

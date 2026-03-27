@@ -5,10 +5,11 @@ Uses Google Calendar API when a token is provided; falls back to mock data.
 
 import os
 from datetime import datetime, timedelta, timezone
-from typing import Optional
+from typing import Optional, List
 
 from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
+from langchain_core.tools import tool
 
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
@@ -33,16 +34,20 @@ def _parse_datetime(date: str, time: str) -> Optional[datetime]:
 
 # ── Tool 1: Calendar Checker ──────────────────────────────────────────────────
 
+@tool
 def check_availability(
     date: str,
     time: str,
     duration_minutes: int = 60,
-    calendar_token: Optional[str] = None,
 ) -> dict:
     """
     Check if a time slot is free.
+    date: Date in YYYY-MM-DD format
+    time: Time in HH:MM format (24-hour)
+    duration_minutes: Duration of the meeting in minutes
     Returns {"free": bool, "conflict_summary": str}
     """
+    calendar_token = os.getenv("CALENDAR_TOKEN")
     start = _parse_datetime(date, time)
     if not start:
         return {"free": False, "conflict_summary": "Could not parse date/time."}
@@ -77,22 +82,25 @@ def check_availability(
 
 # ── Tool 2: Slot Generator ────────────────────────────────────────────────────
 
+@tool
 def suggest_slots(
     date: str,
     duration_minutes: int = 60,
-    calendar_token: Optional[str] = None,
     num_suggestions: int = 3,
 ) -> list[str]:
     """
     Return up to `num_suggestions` free time slots on `date`.
     Checks every hour from 9 AM to 6 PM.
+    date: Date in YYYY-MM-DD format
     """
+    calendar_token = os.getenv("CALENDAR_TOKEN")
     candidate_hours = range(9, 18)
     free_slots: list[str] = []
 
     for hour in candidate_hours:
         t = f"{hour:02d}:00"
-        result = check_availability(date, t, duration_minutes, calendar_token)
+        # Since check_availability is a Tool, we must call it directly or through its func
+        result = check_availability.invoke({"date": date, "time": t, "duration_minutes": duration_minutes})
         if result["free"]:
             free_slots.append(t)
         if len(free_slots) >= num_suggestions:
@@ -103,18 +111,26 @@ def suggest_slots(
 
 # ── Tool 3: Booking Tool ──────────────────────────────────────────────────────
 
+@tool
 def create_booking(
     title: str,
     date: str,
     time: str,
     duration_minutes: int = 60,
-    participants: list[str] = [],
-    calendar_token: Optional[str] = None,
+    participants: Optional[List[str]] = None,
 ) -> dict:
     """
     Create a calendar event.
+    title: Title of the meeting
+    date: Date in YYYY-MM-DD format
+    time: Time in HH:MM format (24-hour)
+    duration_minutes: Duration of the meeting in minutes
+    participants: List of participant emails
     Returns {"success": bool, "event_id": str, "link": str, "error": str}
     """
+    calendar_token = os.getenv("CALENDAR_TOKEN")
+    if participants is None:
+        participants = []
     start = _parse_datetime(date, time)
     if not start:
         return {"success": False, "event_id": "", "link": "", "error": "Invalid date/time."}
