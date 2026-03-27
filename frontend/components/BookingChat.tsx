@@ -179,8 +179,10 @@ export default function BookingChat() {
       
       {/* Sidebar */}
       <div className="hidden lg:flex w-[72px] bg-black/40 border-r border-white/5 flex-col items-center py-6 z-20 backdrop-blur-[10px]">
-        <div className="w-8 h-8 bg-[#14f1d9] rounded-lg flex items-center justify-center text-black mb-[48px] shrink-0">
-          <span className="material-symbols-outlined text-[20px]">ac_unit</span>
+        <div className="mb-[48px] shrink-0">
+          <svg viewBox="0 0 40 40" width="28" height="28" fill="none" stroke="#0066FF" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M5 30 L15 5 L25 35 L35 10" />
+          </svg>
         </div>
         <div className="flex flex-col gap-6 flex-1 w-full items-center">
           <div className="w-12 h-12 rounded-xl flex items-center justify-center text-[#14f1d9] bg-[rgba(20,241,217,0.1)] cursor-pointer">
