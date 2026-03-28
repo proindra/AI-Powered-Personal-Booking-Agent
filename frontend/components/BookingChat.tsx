@@ -66,7 +66,15 @@ export default function BookingChat() {
   useEffect(() => {
     const session = getSession();
     if (session?.profile?.name) setUserName(session.profile.name.split(" ")[0]);
-    setCalendarConnected(hasCalendarAccess());
+
+    // If session is guest, clear any stale calendar token that may have leaked
+    if (session?.type === 'guest') {
+      clearCalendarToken();
+      setCalendarConnected(false);
+    } else {
+      setCalendarConnected(hasCalendarAccess());
+    }
+
     setBackendUrl(localStorage.getItem("cs_backend_url") || process.env.NEXT_PUBLIC_LANGGRAPH_API_URL || "http://localhost:8123");
 
     let stored = loadSessions();
@@ -80,6 +88,14 @@ export default function BookingChat() {
   }, []);
 
   const connectCalendar = () => {
+    const session = getSession();
+
+    // Guest users cannot connect Google Calendar
+    if (!session || session.type === 'guest') {
+      showCalMsg("Sign in with Google to connect Calendar", false);
+      return;
+    }
+
     if (calendarConnected) {
       showCalMsg("Google Calendar already connected ✓", true);
       return;

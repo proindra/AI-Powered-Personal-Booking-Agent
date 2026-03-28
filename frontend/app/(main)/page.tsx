@@ -1,4 +1,5 @@
 "use client";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
@@ -44,13 +45,32 @@ const eventImages = [
 
 export default function EventsPage() {
   const router = useRouter();
+  const [guestNotice, setGuestNotice] = useState(false);
+  const [isRouting, setIsRouting] = useState(false);
+
+  // Prefetch routes to make transitions instant
+  useEffect(() => {
+    router.prefetch("/booking");
+    router.prefetch("/signin");
+  }, [router]);
 
   const handleBookingClick = () => {
+    setIsRouting(true); // Immediate visual feedback!
     const session = getSession();
-    if (session) {
+    
+    // Only fully authenticated Google users can access the booking page
+    if (session && session.type === 'google') {
       router.push("/booking");
+    } else if (session?.type === 'guest') {
+      // Guests get a brief toast explaining why they are redirected
+      setGuestNotice(true);
+      setTimeout(() => {
+        setGuestNotice(false);
+        router.push("/signin?from=booking");
+      }, 1500); 
     } else {
-      router.push("/signin");
+      // Completely unauthenticated users redirect instantly without the guest toast
+      router.push("/signin?from=booking");
     }
   };
 
@@ -100,12 +120,31 @@ export default function EventsPage() {
 
           {/* Centered Action Buttons */}
           <div className="flex flex-col sm:flex-row justify-center w-full gap-4 px-4 md:px-0">
+
+            {/* Guest sign-in notice toast */}
+            {guestNotice && (
+              <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-[999] flex items-center gap-3 px-5 py-3 rounded-2xl backdrop-blur-xl border border-amber-500/30 bg-amber-500/10 text-amber-300 text-[13px] font-medium shadow-xl pointer-events-none animate-fade-in">
+                <span className="material-symbols-outlined text-[18px]">info</span>
+                <span>Guest accounts can&apos;t access AI Booking &mdash; redirecting you to sign in&hellip;</span>
+              </div>
+            )}
+
             <button
               onClick={handleBookingClick}
-              className="group flex items-center justify-center gap-2 bg-brand text-white font-bold uppercase tracking-widest text-xs lg:text-sm px-8 py-3.5 lg:py-4 rounded-full hover:bg-white hover:text-black transition-all duration-300 shadow-[0_0_20px_rgba(0,102,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.6)] hover:-translate-y-1"
+              disabled={isRouting}
+              className={`group flex items-center justify-center gap-2 bg-brand text-white font-bold uppercase tracking-widest text-xs lg:text-sm px-8 py-3.5 lg:py-4 rounded-full transition-all duration-300 shadow-[0_0_20px_rgba(0,102,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.6)] hover:-translate-y-1 ${isRouting ? 'opacity-80 cursor-wait' : 'hover:bg-white hover:text-black'}`}
             >
-              <span>Try AI Booking</span>
-              <span className="material-symbols-outlined text-[16px] transition-transform duration-300 group-hover:translate-x-1">arrow_forward</span>
+              {isRouting ? (
+                <>
+                  <span className="w-4 h-4 rounded-full border-2 border-white/20 border-t-white animate-spin"></span>
+                  <span>Loading...</span>
+                </>
+              ) : (
+                <>
+                  <span>Try AI Booking</span>
+                  <span className="material-symbols-outlined text-[16px] transition-transform duration-300 group-hover:translate-x-1">arrow_forward</span>
+                </>
+              )}
             </button>
             <Link href="#useful-for" className="flex items-center justify-center bg-white/5 text-white font-bold uppercase tracking-widest text-xs lg:text-sm px-8 py-3.5 lg:py-4 rounded-full hover:bg-white/10 transition-all duration-300 border border-white/10 backdrop-blur-md hover:border-white/30 hover:-translate-y-1">
               Learn More

@@ -1,5 +1,6 @@
 import SignInForm from '@/components/auth/SignInForm';
 import LanyardLoader from '@/components/LanyardLoader';
+import { Suspense } from 'react';
 
 export default function SignInPage() {
   return (
@@ -103,7 +104,9 @@ export default function SignInPage() {
 
         {/* Sign In Container */}
         <div className="relative z-10 w-full max-w-[420px] animate-fade-in-up">
-          <SignInForm />
+          <Suspense fallback={<div className="text-white/50 text-xs text-center p-8">Loading authentication...</div>}>
+            <SignInForm />
+          </Suspense>
         </div>
       </div>
 
