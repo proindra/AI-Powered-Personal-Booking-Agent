@@ -1,8 +1,9 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
-import { getSession } from "@/lib/auth/types";
-import { createGoogleCalendarEvent, CalendarEventDetails } from "@/lib/auth/google";
+import { getSession, clearSession } from "@/lib/auth/types";
+import { createGoogleCalendarEvent, CalendarEventDetails, requestCalendarAccess, hasCalendarAccess, clearCalendarToken } from "@/lib/auth/google";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 interface Message {
   role: "user" | "assistant";
@@ -50,14 +51,23 @@ export default function BookingChat() {
   const [isChatActive, setIsChatActive] = useState(false);
   const [userName, setUserName]       = useState("Guest");
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [calendarConnected, setCalendarConnected] = useState(false);
+  const [calendarMsg, setCalendarMsg] = useState<{ text: string; ok: boolean } | null>(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [backendUrl, setBackendUrl] = useState("");
+  const [backendSaved, setBackendSaved] = useState(false);
+
+  const router = useRouter();
 
   const bottomRef          = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  // Load sessions & user name on mount
+  // Load sessions, user name & calendar status on mount
   useEffect(() => {
     const session = getSession();
     if (session?.profile?.name) setUserName(session.profile.name.split(" ")[0]);
+    setCalendarConnected(hasCalendarAccess());
+    setBackendUrl(localStorage.getItem("cs_backend_url") || process.env.NEXT_PUBLIC_LANGGRAPH_API_URL || "http://localhost:8123");
 
     let stored = loadSessions();
     if (stored.length === 0) {
@@ -68,6 +78,52 @@ export default function BookingChat() {
     setSessions(stored);
     setActiveId(stored[0].id);
   }, []);
+
+  const connectCalendar = () => {
+    if (calendarConnected) {
+      showCalMsg("Google Calendar already connected ✓", true);
+      return;
+    }
+    requestCalendarAccess(
+      () => {
+        setCalendarConnected(true);
+        showCalMsg("Google Calendar connected ✓", true);
+      },
+      (err) => { if (err) showCalMsg(err, false); }
+    );
+  };
+
+  const showCalMsg = (text: string, ok: boolean) => {
+    setCalendarMsg({ text, ok });
+    setTimeout(() => setCalendarMsg(null), 3000);
+  };
+
+  const saveBackendUrl = () => {
+    localStorage.setItem("cs_backend_url", backendUrl.trim());
+    setBackendSaved(true);
+    setTimeout(() => setBackendSaved(false), 2000);
+  };
+
+  const disconnectCalendar = () => {
+    clearCalendarToken();
+    setCalendarConnected(false);
+    showCalMsg("Google Calendar disconnected", false);
+  };
+
+  const clearAllChats = () => {
+    const s = newSession();
+    setSessions([s]);
+    saveSessions([s]);
+    setActiveId(s.id);
+    setIsChatActive(false);
+    setInput("");
+  };
+
+  const handleSignOut = () => {
+    clearSession();
+    clearCalendarToken();
+    router.push("/");
+  };
 
   // Scroll to bottom on new messages
   useEffect(() => {
@@ -234,6 +290,14 @@ export default function BookingChat() {
   return (
     <div className="flex h-full w-full bg-transparent text-[#ffffff] font-['Inter',sans-serif] overflow-hidden relative">
 
+      {/* ── Calendar toast ─────────────────────────────────────────── */}
+      {calendarMsg && (
+        <div className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-[999] flex items-center gap-2 px-4 py-2.5 rounded-2xl text-[13px] font-medium shadow-xl backdrop-blur-xl border transition-all pointer-events-none ${calendarMsg.ok ? 'bg-[rgba(20,241,217,0.12)] border-[#14f1d9]/30 text-[#14f1d9]' : 'bg-[rgba(239,68,68,0.12)] border-red-500/30 text-red-400'}`}>
+          <span className="material-symbols-outlined text-[16px]">{calendarMsg.ok ? 'check_circle' : 'error'}</span>
+          {calendarMsg.text}
+        </div>
+      )}
+
       {/* ── Chat History Sidebar ───────────────────────────────────── */}
       <div className={`${historyOpen ? "w-[260px]" : "w-0"} shrink-0 h-full bg-black/50 border-r border-white/5 flex flex-col transition-all duration-300 overflow-hidden backdrop-blur-xl z-30`}>
         {/* Header */}
@@ -300,18 +364,27 @@ export default function BookingChat() {
           <button onClick={createNewChat} className="w-10 h-10 rounded-xl flex items-center justify-center text-[#8e959c] hover:text-[#14f1d9] hover:bg-[rgba(20,241,217,0.1)] transition-all cursor-pointer" title="New chat">
             <span className="material-symbols-outlined text-[20px]">add_comment</span>
           </button>
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center text-[#8e959c] hover:text-[#14f1d9] hover:bg-[rgba(20,241,217,0.1)] transition-all cursor-pointer">
-            <span className="material-symbols-outlined text-[20px]">calendar_month</span>
-          </div>
+          <button
+            onClick={connectCalendar}
+            title={calendarConnected ? "Google Calendar connected" : "Connect Google Calendar"}
+            className="relative w-10 h-10 rounded-xl flex items-center justify-center transition-all cursor-pointer group"
+            style={{ color: calendarConnected ? '#14f1d9' : '#8e959c' }}
+          >
+            <span className="material-symbols-outlined text-[20px] group-hover:text-[#14f1d9] group-hover:scale-110 transition-all">calendar_month</span>
+            {calendarConnected && (
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#14f1d9] shadow-[0_0_6px_rgba(20,241,217,0.8)]" />
+            )}
+          </button>
         </div>
 
         <div className="flex flex-col gap-5 w-full items-center mt-auto">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center text-[#8e959c] hover:text-[#14f1d9] hover:bg-[rgba(20,241,217,0.1)] transition-all cursor-pointer">
-            <span className="material-symbols-outlined text-[20px]">settings</span>
-          </div>
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center text-[#8e959c] hover:text-[#14f1d9] hover:bg-[rgba(20,241,217,0.1)] transition-all cursor-pointer">
-            <span className="material-symbols-outlined text-[20px]">person</span>
-          </div>
+          <button
+            onClick={() => setSettingsOpen(o => !o)}
+            title="Settings"
+            className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all cursor-pointer ${settingsOpen ? 'text-[#14f1d9] bg-[rgba(20,241,217,0.1)]' : 'text-[#8e959c] hover:text-[#14f1d9] hover:bg-[rgba(20,241,217,0.1)]'}`}
+          >
+            <span className={`material-symbols-outlined text-[20px] transition-transform duration-300 ${settingsOpen ? 'rotate-45' : ''}`}>settings</span>
+          </button>
         </div>
       </div>
 
@@ -326,10 +399,12 @@ export default function BookingChat() {
           <div className="flex items-center gap-2">
             <span className="text-[13px] text-white/40 font-medium truncate max-w-[200px]">{activeSession?.title || "New conversation"}</span>
           </div>
-          <Link href="/profile" className="flex items-center gap-2 bg-transparent border-none text-white cursor-pointer px-3 py-2 rounded-[16px] transition-all hover:bg-[rgba(255,255,255,0.05)] text-[14px]">
-            <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-[#14f1d9] to-blue-500 opacity-80" />
-            <span className="text-[13px]">Profile</span>
-            <span className="material-symbols-outlined text-[#8e959c] text-[16px]">expand_more</span>
+          <Link
+            href="/"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-[14px] text-[13px] text-white/50 hover:text-white hover:bg-white/5 transition-all group"
+          >
+            <span className="material-symbols-outlined text-[16px] group-hover:-translate-x-0.5 transition-transform">arrow_back</span>
+            <span>Home</span>
           </Link>
         </div>
 

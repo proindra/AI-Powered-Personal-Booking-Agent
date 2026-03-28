@@ -1,8 +1,10 @@
 "use client";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import BookingPageClient from "@/components/BookingPageClient";
 import { TypeAnimation } from 'react-type-animation';
+import { getSession } from "@/lib/auth/types";
 
 const EventStackScroll = dynamic(() => import("@/components/EventStackScroll"), {
   ssr: false,
@@ -41,6 +43,17 @@ const eventImages = [
 ];
 
 export default function EventsPage() {
+  const router = useRouter();
+
+  const handleBookingClick = () => {
+    const session = getSession();
+    if (session) {
+      router.push("/booking");
+    } else {
+      router.push("/signin");
+    }
+  };
+
   return (
     <div className="pt-32">
       {/* HERO / INTRO */}
@@ -87,10 +100,13 @@ export default function EventsPage() {
 
           {/* Centered Action Buttons */}
           <div className="flex flex-col sm:flex-row justify-center w-full gap-4 px-4 md:px-0">
-            <Link href="/booking" className="group flex items-center justify-center gap-2 bg-brand text-white font-bold uppercase tracking-widest text-xs lg:text-sm px-8 py-3.5 lg:py-4 rounded-full hover:bg-white hover:text-black transition-all duration-300 shadow-[0_0_20px_rgba(0,102,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.6)] hover:-translate-y-1">
+            <button
+              onClick={handleBookingClick}
+              className="group flex items-center justify-center gap-2 bg-brand text-white font-bold uppercase tracking-widest text-xs lg:text-sm px-8 py-3.5 lg:py-4 rounded-full hover:bg-white hover:text-black transition-all duration-300 shadow-[0_0_20px_rgba(0,102,255,0.3)] hover:shadow-[0_0_30px_rgba(255,255,255,0.6)] hover:-translate-y-1"
+            >
               <span>Try AI Booking</span>
               <span className="material-symbols-outlined text-[16px] transition-transform duration-300 group-hover:translate-x-1">arrow_forward</span>
-            </Link>
+            </button>
             <Link href="#useful-for" className="flex items-center justify-center bg-white/5 text-white font-bold uppercase tracking-widest text-xs lg:text-sm px-8 py-3.5 lg:py-4 rounded-full hover:bg-white/10 transition-all duration-300 border border-white/10 backdrop-blur-md hover:border-white/30 hover:-translate-y-1">
               Learn More
             </Link>
