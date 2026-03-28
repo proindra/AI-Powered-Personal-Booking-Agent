@@ -4,6 +4,7 @@ import { getSession, clearSession } from "@/lib/auth/types";
 import { createGoogleCalendarEvent, CalendarEventDetails, requestCalendarAccess, hasCalendarAccess, clearCalendarToken } from "@/lib/auth/google";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import VerticalTimeline from "./VerticalTimeline";
 
 interface Message {
   role: "user" | "assistant";
@@ -56,6 +57,12 @@ export default function BookingChat() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [backendUrl, setBackendUrl] = useState("");
   const [backendSaved, setBackendSaved] = useState(false);
+  
+  // Timeline widget state
+  const [calendarState, setCalendarState] = useState<{ bookedSlots: any[]; suggestedSlots: any[] }>({
+    bookedSlots: [],
+    suggestedSlots: []
+  });
 
   const router = useRouter();
 
@@ -263,7 +270,18 @@ export default function BookingChat() {
 
       if (!res.ok) throw new Error("Failed to get response");
       const data = await res.json();
+      
+      // Extract the new backend JSON structured response
       const reply = data.response || data.message || "I received your request. Let me help you with that!";
+      
+      // Parse LangGraph state for the calendar widget
+      if (data.state) {
+        setCalendarState({
+          bookedSlots: data.state.booked_slots || [],
+          suggestedSlots: data.state.suggested_slots || []
+        });
+      }
+
       updateMessages(prev => [...prev, { role: "assistant", content: reply }]);
       await handleCalendarSync(reply);
     } catch {
@@ -352,8 +370,16 @@ export default function BookingChat() {
           ))}
         </div>
 
+        {/* Vertical Timeline Widget block */}
+        <div className="mx-3 mt-1 mb-2 h-[260px] shrink-0 rounded-2xl border border-white/10 overflow-hidden relative shadow-[0_10px_40px_rgba(0,0,0,0.3)] bg-gradient-to-b from-white/[0.03] to-transparent">
+          <VerticalTimeline 
+            bookedSlots={calendarState.bookedSlots} 
+            suggestedSlots={calendarState.suggestedSlots} 
+          />
+        </div>
+
         {/* Footer */}
-        <div className="px-4 py-4 border-t border-white/5 shrink-0">
+        <div className="px-4 py-3 shrink-0 text-center opacity-60">
           <p className="text-[10px] text-white/20 uppercase tracking-widest">Powered by ConnectSphere AI</p>
         </div>
       </div>
@@ -361,7 +387,11 @@ export default function BookingChat() {
       {/* ── Narrow Icon Sidebar ────────────────────────────────────── */}
       <div className="hidden lg:flex w-[56px] bg-black/40 border-r border-white/5 flex-col items-center py-5 z-20 backdrop-blur-[10px] shrink-0">
         {/* Logo */}
-        <div className="mb-8 shrink-0">
+        <div 
+          onClick={() => setHistoryOpen(false)}
+          className="mb-8 shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
+          title="Close sidebar"
+        >
           <svg viewBox="0 0 40 40" width="26" height="26" fill="none" stroke="#0066FF" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
             <path d="M5 30 L15 5 L25 35 L35 10" />
           </svg>
