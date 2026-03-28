@@ -121,6 +121,14 @@ Smooth inertia scroll (Lenis), reveal animations, TypeAnimation hero heading, sc
 
 ## 💻 Getting Started
 
+> [!IMPORTANT]
+> **Moving to a new machine?** 
+> If you've just cloned this repo and it's not starting up:
+> 1. **Secret Isolation**: Your `.env` files are ignored by Git for security. You **must** manually create `backend/.env` and `frontend/.env.local` based on their `.example` templates.
+> 2. **Auth Whitelisting**: You must add `http://localhost:3000` to your **Authorized JavaScript origins** in the Google Cloud Console or login will fail.
+> 
+> See the [Comprehensive Local Setup Guide](file:///c:/Users/prajw/OneDrive/Desktop/editx/AI-Powered-Personal-Booking-Agent/LOCAL_DEV.md) for step-by-step instructions.
+
 ### Prerequisites
 - Node.js 18+
 - Google Cloud project with OAuth 2.0 credentials (Web application type)
