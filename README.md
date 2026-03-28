@@ -210,21 +210,6 @@ Pushes to `main` trigger automated GitHub Pages deployment via GitHub Actions.
 
 ---
 
-## 🗺️ Planned Features
-
-1. **Payment Processing** — Stripe for paid sessions & dynamic pricing
-2. **Speaker Directory** — Searchable profiles with availability and AI matching
-3. **Group Bookings** — Team bookings, waitlists, shared calendars
-4. **Video Conferencing** — Auto Zoom/Twilio link generation post-booking
-5. **Post-Booking Automation** — Email confirmations (Resend), calendar invites, reminders
-6. **Live Event Dashboard** — Real-time attendee tracking & AI networking matchmaking
-7. **Personalized Recommendations** — ML-based session suggestions
-8. **Multi-Language Support** — AI translation agent for global accessibility
-9. **Analytics Dashboard** — Organizer booking metrics & revenue tracking
-10. **Multi-Agent Workflow** — Parallel LangGraph agents (availability + payment + confirmation)
-
----
-
 ## 👥 Team
 
 Built with love by **Team Net-Y** @ 2026
