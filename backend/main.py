@@ -9,7 +9,7 @@ from typing import Optional
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
@@ -40,23 +40,7 @@ class ChatRequest(BaseModel):
     calendar_token: Optional[str] = None  # forwarded from frontend if user granted calendar access
 
 
-# ── SSE helpers ───────────────────────────────────────────────────────────────
 
-def _sse(data: dict) -> str:
-    return f"data: {json.dumps(data)}\n\n"
-
-
-async def _stream_response(text: str):
-    """Yield the response word-by-word as SSE chunks, then send [DONE]."""
-    words = text.split(" ")
-    for i in range(0, len(words), 3):
-        chunk = " ".join(words[i : i + 3]) + " "
-        yield _sse({"content": chunk})
-    yield _sse({"content": ""})   # flush
-    yield "data: [DONE]\n\n"
-
-
-# ── Endpoint ──────────────────────────────────────────────────────────────────
 
 @app.post("/chat")
 async def chat(req: ChatRequest):
@@ -86,11 +70,15 @@ async def chat(req: ChatRequest):
 
     response_text = response_text or "I'm not sure how to help with that. Could you rephrase?"
 
-    return StreamingResponse(
-        _stream_response(response_text),
-        media_type="text/event-stream",
-        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
-    )
+    try:
+        state_dict = result if isinstance(result, dict) else result.model_dump()
+    except Exception:
+        state_dict = {}
+
+    return JSONResponse(content={
+        "response": response_text,
+        "state": state_dict
+    })
 
 
 @app.get("/health")

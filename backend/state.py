@@ -21,6 +21,8 @@ class AgentState(BaseModel):
 
     # Results from calendar tool
     available_slots: list[str] = []
+    booked_slots: list[dict] = []     # [{'start': '...', 'end': '...'}, ...]
+    suggested_slots: list[dict] = []  # [{'start': '...', 'end': '...'}, ...]
     conflict: bool = False
 
     # Set to True once a booking is successfully created

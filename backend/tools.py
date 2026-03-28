@@ -58,26 +58,50 @@ def check_availability(
         # Mock: treat 9 AM and 2 PM as busy for demo purposes
         busy_hours = {9, 14}
         is_busy = start.hour in busy_hours
+        
+        # Mock 48h busy slots (just pad the current day's busy hours)
+        now_dt = datetime.now(timezone.utc)
+        mock_busy = []
+        for d in range(2):
+            for bh in busy_hours:
+                bh_start = (now_dt + timedelta(days=d)).replace(hour=bh, minute=0, second=0)
+                bh_end = bh_start + timedelta(hours=1)
+                mock_busy.append({"start": _iso(bh_start), "end": _iso(bh_end)})
+
         return {
             "free": not is_busy,
             "conflict_summary": f"Mock: {'Busy' if is_busy else 'Free'} at {time} on {date}.",
+            "busy_slots": mock_busy,
         }
 
     try:
         service = _calendar_service(calendar_token)
-        body = {
+        # Fetch the specific slot for the agent
+        slot_body = {
             "timeMin": _iso(start),
             "timeMax": _iso(end),
             "items": [{"id": "primary"}],
         }
-        result = service.freebusy().query(body=body).execute()
-        busy = result["calendars"]["primary"]["busy"]
+        slot_result = service.freebusy().query(body=slot_body).execute()
+        busy_slot = slot_result["calendars"]["primary"]["busy"]
+
+        # Fetch the 48-hour window for the UI timeline widget
+        now_dt = datetime.now(timezone.utc)
+        timeline_body = {
+            "timeMin": _iso(now_dt),
+            "timeMax": _iso(now_dt + timedelta(hours=48)),
+            "items": [{"id": "primary"}],
+        }
+        timeline_result = service.freebusy().query(body=timeline_body).execute()
+        busy_48h = timeline_result["calendars"]["primary"].get("busy", [])
+
         return {
-            "free": len(busy) == 0,
-            "conflict_summary": f"Busy periods: {busy}" if busy else "Slot is free.",
+            "free": len(busy_slot) == 0,
+            "conflict_summary": f"Busy periods: {busy_slot}" if busy_slot else "Slot is free.",
+            "busy_slots": busy_48h,
         }
     except Exception as e:
-        return {"free": False, "conflict_summary": f"Calendar API error: {e}"}
+        return {"free": False, "conflict_summary": f"Calendar API error: {e}", "busy_slots": []}
 
 
 # ── Tool 2: Slot Generator ────────────────────────────────────────────────────
@@ -87,7 +111,7 @@ def suggest_slots(
     date: str,
     duration_minutes: int = 60,
     num_suggestions: int = 3,
-) -> list[str]:
+) -> dict:
     """
     Return up to `num_suggestions` free time slots on `date`.
     Checks every hour from 9 AM to 6 PM.
@@ -106,7 +130,7 @@ def suggest_slots(
         if len(free_slots) >= num_suggestions:
             break
 
-    return free_slots
+    return {"date": date, "duration_minutes": duration_minutes, "free_slots": free_slots}
 
 
 # ── Tool 3: Booking Tool ──────────────────────────────────────────────────────

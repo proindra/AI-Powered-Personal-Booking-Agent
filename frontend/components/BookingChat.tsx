@@ -258,11 +258,19 @@ export default function BookingChat() {
     try {
       const authSession = getSession();
       const langgraphUrl = process.env.NEXT_PUBLIC_LANGGRAPH_API_URL || "http://localhost:8123";
+      
+      // Capture the current full context for the API
+      const currentMessages = activeSession?.messages || [WELCOME];
+      const payloadMessages = [...currentMessages, { role: "user", content: text }].map(m => ({
+        role: m.role,
+        content: m.content
+      }));
+
       const res = await fetch(`${langgraphUrl}/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          message: text,
+          messages: payloadMessages,
           session_id: authSession?.email || "anonymous",
           calendar_token: typeof window !== "undefined" ? localStorage.getItem("calendar_token") : null,
         }),

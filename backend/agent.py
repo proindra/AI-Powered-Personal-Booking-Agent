@@ -88,26 +88,48 @@ def call_model(state: AgentState) -> dict:
     if llm:
         response = llm.invoke(lc_messages)
         # We store the response in our dict format
-        msg = {"role": "assistant", "content": response.content}
+        content_val = response.content
+        if isinstance(content_val, list):
+            content_val = " ".join([str(p.get("text", "")) for p in content_val if isinstance(p, dict) and "text" in p])
+        elif not isinstance(content_val, str):
+            content_val = str(content_val)
+
+        msg = {"role": "assistant", "content": content_val}
         if hasattr(response, "tool_calls") and response.tool_calls:
             msg["tool_calls"] = response.tool_calls
 
         update_state = {
             "messages": [msg],
-            "response": response.content if not (hasattr(response, "tool_calls") and response.tool_calls) else ""
+            "response": content_val if not (hasattr(response, "tool_calls") and response.tool_calls) else ""
         }
 
-        # Check if booking was just confirmed
+        # Check if booking was just confirmed or slots suggested
         if state.messages and state.messages[-1].get("role") == "tool":
             last_tool = state.messages[-1]
-            if last_tool.get("name") == "create_booking":
-                try:
-                    res = json.loads(last_tool["content"])
+            try:
+                res = json.loads(last_tool["content"])
+                if last_tool.get("name") == "create_booking":
                     if res.get("success"):
                         update_state["confirmed"] = True
                         update_state["calendar_event_id"] = res.get("event_id", "")
-                except Exception:
-                    pass
+                elif last_tool.get("name") == "check_availability":
+                    if "busy_slots" in res:
+                        update_state["booked_slots"] = res["busy_slots"]
+                elif last_tool.get("name") == "suggest_slots":
+                    date_str = res.get("date")
+                    dur = res.get("duration_minutes", 60)
+                    if date_str and "free_slots" in res:
+                        from datetime import datetime, timedelta, timezone
+                        suggested = []
+                        for t in res["free_slots"]:
+                            dt = datetime.strptime(f"{date_str} {t}", "%Y-%m-%d %H:%M").replace(tzinfo=timezone.utc)
+                            suggested.append({
+                                "start": dt.isoformat(),
+                                "end": (dt + timedelta(minutes=dur)).isoformat()
+                            })
+                        update_state["suggested_slots"] = suggested
+            except Exception:
+                pass
 
         return update_state
     else:

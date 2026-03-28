@@ -1,6 +1,6 @@
 # ConnectSphere
 
-A kinetic, single-page event platform built with **Next.js 15**, **TypeScript**, and **Tailwind CSS**. ConnectSphere connects founders, engineers, designers, and marketers through live conferences, lectures, workshops, and AI-powered session booking.
+A kinetic, single-page event platform built with **Next.js 16**, **TypeScript**, and **Tailwind CSS**. ConnectSphere connects founders, engineers, designers, and marketers through live conferences, lectures, workshops, and AI-powered session booking.
 
 ---
 
@@ -8,7 +8,7 @@ A kinetic, single-page event platform built with **Next.js 15**, **TypeScript**,
 
 | Layer | Technology |
 |---|---|
-| Framework | Next.js 15 (App Router) |
+| Framework | Next.js 16 (App Router, Turbopack) |
 | Language | TypeScript |
 | Styling | Tailwind CSS v4 |
 | 3D Engine | Three.js / React Three Fiber |
@@ -17,13 +17,17 @@ A kinetic, single-page event platform built with **Next.js 15**, **TypeScript**,
 | Icons | Material Symbols Outlined |
 | Smooth Scroll | Lenis |
 | AI Booking | LangGraph (FastAPI backend) |
+| Calendar | Google Calendar API (OAuth 2.0) |
 
 ---
 
 ## ⚠️ Critical Technical Notes
 
 > [!IMPORTANT]
-> **Single-Page Architecture**: This project is strictly a Single-Page Application (SPA). All core sections (Networking, Booking, etc.) are implemented as IDs within `app/(main)/page.tsx`. **Do not add standalone page directories** (e.g., `/networking`) as they break the unified kinetic scroll experience.
+> **Auth-Guarded Booking**: The "Try AI Booking" CTA on the landing page now checks for an existing session before navigating. Unauthenticated users are redirected to `/signin` first; authenticated users go directly to `/booking`.
+
+> [!IMPORTANT]
+> **Single-Page Architecture**: This project is strictly a Single-Page Application (SPA). All core sections (Networking, Booking, etc.) are implemented as IDs within `app/(main)/page.tsx`. **Do not add standalone page directories** (e.g., `/networking`) as they break the unified kinetic scroll experience. Note: `/booking`, `/signin`, and `/profile` are intentional standalone routes.
 
 > [!NOTE]
 > **Conditional BasePath**: To support GitHub Pages deployment, `next.config.ts` uses a conditional `basePath`.
@@ -34,9 +38,9 @@ A kinetic, single-page event platform built with **Next.js 15**, **TypeScript**,
 > [!TIP]
 > **Environment Variables**: Create a `.env.local` file in the `frontend` directory:
 > ```env
-> LANGGRAPH_API_URL=your_backend_url_here
+> NEXT_PUBLIC_LANGGRAPH_API_URL=http://localhost:8123
 > ```
-> This is required for the AI Booking Agent to communicate with the LangGraph backend.
+> The AI Booking chat also reads `cs_backend_url` from `localStorage` (overrideable via the Settings panel) — `localStorage` takes priority over the env var.
 
 ---
 
@@ -44,78 +48,132 @@ A kinetic, single-page event platform built with **Next.js 15**, **TypeScript**,
 
 ```text
 /
-├── frontend/             # Next.js Application Root
-│   ├── app/              # App Router
-│   │   ├── (main)/page.tsx  # Main landing page (kinetic scroll sections)
-│   │   ├── (auth)/signin    # Sign-in page with 3D Lanyard feature
-│   │   ├── profile/page.tsx # User Profile dashboard with Lanyard integration
-│   │   ├── api/booking      # AI Agent proxy route
-│   │   └── globals.css      # Branding & Animations
-│   ├── components/       # Reusable Brutalist UI & 3D canvas components
-│   ├── lib/auth/         # Authentication logic (Google Auth & Session Storage)
-│   ├── public/           # GLTF models, textures, Favicon & Brand Assets
-│   └── next.config.ts    # Deployment & Path configuration
-├── .github/              # CI/CD Workflows for GitHub Pages deployment
-└── README.md             # Project Documentation
+├── frontend/                    # Next.js Application Root
+│   ├── app/
+│   │   ├── (main)/page.tsx      # Landing page with auth-guarded CTA
+│   │   ├── (auth)/signin/       # Sign-in page (Google OAuth + Guest)
+│   │   ├── booking/             # Full-viewport AI Booking chat page
+│   │   ├── profile/             # User Profile dashboard + Lanyard
+│   │   ├── api/                 # API proxy routes
+│   │   └── globals.css          # Branding & Animations
+│   ├── components/
+│   │   ├── BookingChat.tsx       # AI chat UI (sidebar, history, settings)
+│   │   ├── BookingPageClient.tsx # Booking page shell
+│   │   ├── Lanyard.tsx           # 3D physics lanyard component
+│   │   ├── EventStackScroll.tsx  # Lazy-loaded scroll-stack events
+│   │   └── auth/                 # UserAvatar, SignInForm components
+│   ├── lib/
+│   │   ├── auth/google.ts        # Google OAuth, Calendar token helpers
+│   │   ├── auth/types.ts         # Session save/get/clear helpers
+│   │   └── calendar/useCalendar.ts # Google Calendar read/write hook
+│   ├── public/                   # GLTF models, textures, brand assets
+│   └── next.config.ts            # Deployment & path configuration
+├── .github/                      # CI/CD for GitHub Pages
+└── README.md
 ```
+
+---
 
 ## 🚀 Key Features
 
-- **3D Interactive Lanyard (Optimized)**: A physics-based, draggable 3D lanyard featuring a reactive ribbon and the branding.
-  - *Performance*: Preloaded GLTF assets, capped DPR (1.5x) for 60fps, and a beautiful shimmer skeleton loading state.
-- **Kinetic Single-Page UX**: Seamless transitions between sections via smooth inertia scrolling and reveal animations.
-- **AI-Powered Booking**: Real-time natural language scheduling via LangGraph integration.
-- **Brutalist Design System**: High-impact typography, custom kinetic animations, and a refined \"clean & neat\" CSS architecture.
-- **Responsive Integrity**: Pixel-perfect layout across all viewports with zero clipping.
+### AI Booking Interface (`/booking`)
+A full-viewport, dark-themed chat UI — no longer embedded in the landing page:
 
-## 🚀 Implemented Features
+- **ChatGPT-style History Sidebar**: Collapsible panel listing all past sessions with rename-on-first-message, delete, and new-chat support. Sessions persist in `localStorage`.
+- **Narrow Icon Sidebar** (desktop only):
+  - 🗂️ **History toggle** — open/close the chat history drawer
+  - ➕ **New Chat** — start a fresh session
+  - 📅 **Connect Google Calendar** — triggers incremental OAuth consent. Icon turns teal with a glowing status dot when connected. Toast feedback on connect/disconnect.
+  - ⚙️ **Settings panel** — slide-in panel with:
+    - Backend API URL editor (saved to `localStorage` as `cs_backend_url`)
+    - Google Calendar connect / disconnect toggle
+    - Clear all chat history
+    - Sign out
+- **Live Vertical Timeline Widget**: A 48-hour continuous scroll timeline visualizing live calendar availability. Renders blue blocks for booked meetings and pulsating neon teal blocks for AI-suggested time slots dynamically synced with the chat.
+- **Native Gemini Integration**: The LangGraph backend is configured to use `gemini-flash-latest` via `.env`, supporting massive context windows and real-time tool calling.
+- **Conversational Memory**: The React frontend sends the complete conversation history array during each API call, allowing the agent to continuously build context.
+- **Continuous chat input** — Enter to send, Shift+Enter for newlines. Input stays focused across renders.
+- **Google Calendar sync** — after a confirmed booking the AI will attempt to add the event to Google Calendar automatically (requires calendar token).
 
-- **Interactive 3D Lanyard**: A physics-based, draggable 3D lanyard featuring a reactive ribbon, preloaded GLTF assets, and a beautiful shimmer skeleton loading state. Integrated gracefully into both the sign-in and user profile pages.
-- **Authentication & User Profile**: Google Auth implementation utilizing `localStorage` to manage user sessions seamlessly, complete with a dedicated, responsive user profile dashboard.
-- **Kinetic Single-Page UX**: Seamless transitions between sections via smooth inertia scrolling and reveal animations powered by Lenis.
-- **Frontend Booking UI**: High-impact conversational interfaces and forms tailored for AI booking (awaiting LangGraph backend integration).
-- **Brutalist Design System**: High-impact typography, custom kinetic animations, glassmorphism logic, and responsive CSS architecture maintaining perfection across all viewports.
+### Auth-Guarded CTA
+The **"Try AI Booking"** button on the landing page:
+- If the user **is signed in** → navigates directly to `/booking`
+- If **not signed in** → redirects to `/signin` first
 
-## 🚀 Planned Features
+### Google Calendar Integration
+- Separate incremental OAuth consent (does not affect sign-in scope)
+- Token stored as `calendar_token` in `localStorage`
+- `hasCalendarAccess()` / `clearCalendarToken()` helpers in `lib/auth/google.ts`
+- `useCalendar()` hook in `lib/calendar/useCalendar.ts` for reading & creating events
 
-1. **Payment Processing**: Stripe integration for paid sessions, workshops, and dynamic pricing based on demand/speaker.
-2. **Speaker Directory**: Searchable database of speakers with bios, availability calendars, ratings, and AI-powered matching.
-3. **Group & Multi-Attendee Bookings**: Support for team bookings, waitlists, and shared calendars.
-4. **Video Conferencing**: Automatic Zoom/Twilio Video links generation post-booking.
-5. **Post-Booking Automation**: Email confirmations (Resend), calendar invites, feedback surveys, and follow-up reminders.
-6. **Live Event Dashboard**: Real-time attendee tracking, networking matchmaking (AI similarity scoring), and session status updates.
-7. **Personalized Recommendations**: ML-based session suggestions using past bookings, preferences, and event metadata.
-8. **Multi-Language Support**: AI translation agent for global accessibility.
-9. **Analytics Dashboard**: Organizer tools for booking metrics, conversion rates, revenue tracking.
-10. **AR/VR Session Previews**: WebXR integration to preview event venues/sessions in AR.
-11. **Multi-Agent Workflow**: LangGraph agents for parallel tasks (availability + payment + confirmation).
-12. **Social Sharing**: Share booking links, generate QR codes for check-ins.
-13. **Waitlist & Notifications**: SMS/Email alerts when preferred slots open up.
-14. **Feedback & Ratings**: Post-session reviews influencing future recommendations.
-15. **Admin Panel**: Event organizers manage speakers, slots, and pricing via dashboard.
+### Authentication
+- Google OAuth (email + profile scope, minimal permissions)
+- Guest mode
+- Session persisted in `localStorage` via `saveSession` / `getSession` / `clearSession`
+
+### 3D Interactive Lanyard
+Physics-based draggable lanyard on the sign-in and profile pages. Pre-loads GLTF assets, capped DPR at 1.5× for 60 fps, with a shimmer skeleton state.
+
+### Kinetic Landing Page
+Smooth inertia scroll (Lenis), reveal animations, TypeAnimation hero heading, scroll-stacked event cards, and brutalist card design system.
+
+---
 
 ## 💻 Getting Started
 
-1. **Clone the repository**
-2. **Setup Frontend**
-   ```bash
-   cd frontend
-   npm install
-   npm run dev
-   ```
-3. **Build for Production**
-   ```bash
-   npm run build
-   ```
+### Prerequisites
+- Node.js 18+
+- Google Cloud project with OAuth 2.0 credentials (Web application type)
+- LangGraph backend running locally or deployed
+
+### 1. Clone & Install
+```bash
+git clone https://github.com/proindra/AI-Powered-Personal-Booking-Agent.git
+cd AI-Powered-Personal-Booking-Agent/frontend
+npm install
+```
+
+### 2. Configure Environment
+Create `frontend/.env.local`:
+```env
+NEXT_PUBLIC_LANGGRAPH_API_URL=http://localhost:8123
+NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id_here
+```
+
+### 3. Run Development Server
+```bash
+npm run dev
+# → http://localhost:3000
+```
+
+### 4. Run LangGraph Backend (optional, for AI chat)
+```bash
+cd ../backend
+pip install -r requirements.txt
+python -m uvicorn main:app --reload --port 8123
+# → http://localhost:8123
+```
+
+Requires a `backend/.env` file:
+```env
+LLM_PROVIDER=gemini
+GEMINI_MODEL=gemini-flash-latest
+GOOGLE_API_KEY=your_google_api_key_here
+```
+
+> [!TIP]
+> You can override the backend URL at runtime via the **Settings panel** in the AI Booking chat without restarting the dev server.
+
+---
 
 ## 🌐 Deployment
-
-The project is configured for automated deployment to **GitHub Pages** via GitHub Actions. Any push to the `main` branch triggers a build and deploy cycle.
 
 | Environment | URL |
 |---|---|
 | Production | [proindra.github.io/AI-Powered-Personal-Booking-Agent/](https://proindra.github.io/AI-Powered-Personal-Booking-Agent/) |
 | Local Dev | `http://localhost:3000/` |
+
+Pushes to `main` trigger automated GitHub Pages deployment via GitHub Actions.
 
 ---
 
@@ -128,20 +186,42 @@ The project is configured for automated deployment to **GitHub Pages** via GitHu
 | `reveal-right` | Fade + slide from right |
 | `reveal-scale` | Fade + scale up |
 | `stagger-children` | Auto-staggers child elements |
-| `animate-float-subtle` | Gentle float for speaker images |
-| `animate-glow-pulse` | Orange glow pulse for CTA buttons |
+| `animate-float-subtle` | Gentle float for hero SVG |
+| `animate-glow-pulse` | Blue glow pulse for CTA buttons |
 | `breathe-pod` | Organic breathing for logo pods |
 | Scroll stack | Cards slide up over each other on scroll |
 | Lenis | Smooth inertia scrolling site-wide |
+| Settings gear | Rotates 45° when settings panel is open |
 
 ---
 
-## 🛠️ Project Evolution & Cleanup
+## 🛠️ Recent Changes
 
-- **Performance Optimization**: Implemented Next.js `dynamic` imports to lazy-load heavy interactive and 3D components (like `EventStackScroll`), significantly improving initial page load speed and TTFB.
-- **CSS Deduplication**: Removed ~30% redundant CSS, collapsed repeating @keyframes, and unified active reveal states.
-- **Font Optimization**: Switched from double-loading (CSS @import + link) to a single high-priority `<link>` for Material Symbols.
-- **Component Scaling**: Refined the 3D Lanyard texture mapping to prevent logo overflow and improved material visibility in dark mode.
+| Change | Details |
+|---|---|
+| Live Timeline Widget | Integrated a responsive `<VerticalTimeline />` React component displaying a scrolling 48-hour window of your `check_calendar` availability directly in the sidebar. |
+| Gemini API Config | Configured the LangGraph FastAPi backend to natively parse `gemini-flash-latest` tools and mapped the `.env` dependencies. |
+| LangGraph State Memory | The frontend now sends the full conversational context matrix to the backend so the agent remembers previous instructions naturally. |
+| Removed Profile nav button | Replaced with **Back to Home** (`← Home`) in the booking chat topbar |
+| Auth-guarded booking CTA | "Try AI Booking" checks session → routes to `/signin` or `/booking` |
+| Google Calendar button | Calendar icon in sidebar triggers OAuth consent; glowing teal dot when connected; toast feedback |
+| Settings panel | Slide-in panel with backend URL editor, calendar disconnect, clear history, sign-out |
+| Backend URL override | Stored in `localStorage` as `cs_backend_url`, takes priority over env var |
+
+---
+
+## 🗺️ Planned Features
+
+1. **Payment Processing** — Stripe for paid sessions & dynamic pricing
+2. **Speaker Directory** — Searchable profiles with availability and AI matching
+3. **Group Bookings** — Team bookings, waitlists, shared calendars
+4. **Video Conferencing** — Auto Zoom/Twilio link generation post-booking
+5. **Post-Booking Automation** — Email confirmations (Resend), calendar invites, reminders
+6. **Live Event Dashboard** — Real-time attendee tracking & AI networking matchmaking
+7. **Personalized Recommendations** — ML-based session suggestions
+8. **Multi-Language Support** — AI translation agent for global accessibility
+9. **Analytics Dashboard** — Organizer booking metrics & revenue tracking
+10. **Multi-Agent Workflow** — Parallel LangGraph agents (availability + payment + confirmation)
 
 ---
 
