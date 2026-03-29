@@ -14,12 +14,12 @@ from langgraph.graph import StateGraph, END
 from langgraph.prebuilt import ToolNode, tools_condition
 
 from state import AgentState
-from tools import check_availability, suggest_slots, create_booking
+from tools import check_availability, suggest_slots, add_to_google_calendar
 
 # ── LLM setup ────────────────────────────────────────────────────────────────
 
 _llm = None
-_tools = [check_availability, suggest_slots, create_booking]
+_tools = [check_availability, suggest_slots, add_to_google_calendar]
 
 def _get_llm():
     global _llm
@@ -50,16 +50,32 @@ def _get_llm():
 
 # ── System Prompt ────────────────────────────────────────────────────────────
 
-_SYSTEM_PROMPT = """You are ConnectSphere's AI booking assistant. You help users schedule meetings, check availability, and manage calendar bookings.
-You have access to tools to check availability, suggest free slots, and create bookings.
+_SYSTEM_PROMPT = """CORE IDENTITY:
+You are the Executive Calendar Agent for this application. Your primary function is to bridge the gap between user intent and the Google Calendar API. You do not "pretend" to save events; you capture structured data to trigger real API calls.
+
+YOUR TOOLS:
+You have access to a tool called add_to_google_calendar. You must use this tool whenever a user expresses an intent to "schedule," "book," "remind," or "add" something to their calendar.
+
+DATA COLLECTION REQUIREMENTS:
+Before calling the API, you MUST have these 4 variables. If any are missing, ask the user immediately:
+- Summary: (Title of the event)
+- Date: (The specific day)
+- Start Time: (The exact beginning of the event)
+- Duration/End Time: (How long it lasts)
+
+THE "ANTI-GRAVITY" WORKFLOW:
+Step 1: Parse & Extract: When a user says "Add a meeting tomorrow at 4 PM," extract the date and time.
+Step 2: Confirm Intent: Present a summary: "I've prepared a Google Calendar invite for [Event Name] on [Date] at [Time]. Should I sync this to your calendar now?"
+Step 3: Execute Action: Upon confirmation ("Yes", "Do it", "Confirm"), immediately output a JSON tool call to add_to_google_calendar.
+Constraint: Do not say "I have added it" until the API returns a status: 200 or success message.
+Step 4: UI Sync Notification: Once the API confirms, notify the user: "Done! I've synced it. You can tap the Calendar Icon to see it in your project view."
+
+STRICT RULES:
+- No Ghost-Booking: Never tell the user an event is saved if the tool wasn't successfully called.
+- Timezone Awareness: Always assume the user is in IST (India Standard Time) unless specified otherwise.
+- Handle Conflicts: If the API returns a "Conflict," inform the user exactly what event is overlapping.
 
 Today's date is: {today}
-
-Follow these rules:
-1. When checking availability, make sure to ask the user for a date and time if they haven't provided one.
-2. If a time slot is already booked, proactively use suggest_slots to find alternatives.
-3. Before creating a booking, confirm the date, time, and title with the user.
-4. Keep your responses concise, helpful, and naturally conversational.
 """
 
 
@@ -108,7 +124,7 @@ def call_model(state: AgentState) -> dict:
             last_tool = state.messages[-1]
             try:
                 res = json.loads(last_tool["content"])
-                if last_tool.get("name") == "create_booking":
+                if last_tool.get("name") == "add_to_google_calendar":
                     if res.get("success"):
                         update_state["confirmed"] = True
                         update_state["calendar_event_id"] = res.get("event_id", "")
@@ -184,7 +200,7 @@ def call_model(state: AgentState) -> dict:
         # Check if the last message was a mock tool execution
         if state.messages and state.messages[-1].get("role") == "tool":
             last_tool = state.messages[-1]
-            if last_tool.get("name") == "create_booking":
+            if last_tool.get("name") == "add_to_google_calendar":
                 reply = f"✅ **Booking Confirmed**\n\n📅 Date: {new_date}\n⏰ Time: {new_time} UTC\n"
                 return {
                     "messages": [{"role": "assistant", "content": reply}],
@@ -204,7 +220,7 @@ def call_model(state: AgentState) -> dict:
                     "role": "assistant",
                     "content": "",
                     "tool_calls": [{
-                        "name": "create_booking",
+                        "name": "add_to_google_calendar",
                         "args": {"title": "Mock Meeting", "date": new_date, "time": new_time, "duration_minutes": 60},
                         "id": tool_call_id
                     }]

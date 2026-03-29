@@ -1,13 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const BACKEND_URL = process.env.LANGGRAPH_API_URL || "http://localhost:8000";
+const BACKEND_URL = process.env.LANGGRAPH_API_URL || "http://localhost:8123";
 
 export async function POST(req: NextRequest) {
+  let body: any = {};
   try {
-    const body = await req.json();
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ response: "Invalid request body." }, { status: 400 });
+  }
 
-    // Proxy to your LangGraph FastAPI backend
-    // Forward calendar_token if the frontend sent one (Google Calendar access)
+  const userMessage = body.messages?.at(-1)?.content || "";
+
+  try {
+    // Proxy to the FastAPI backend — it returns JSON, not SSE
     const res = await fetch(`${BACKEND_URL}/chat`, {
       method: "POST",
       headers: {
@@ -20,75 +26,64 @@ export async function POST(req: NextRequest) {
     });
 
     if (!res.ok) {
-      // Return a helpful mock response when backend isn't connected
-      return mockResponse(body.messages?.at(-1)?.content || "");
+      return NextResponse.json(buildMockPayload(userMessage));
     }
 
-    // Stream the response back
-    return new Response(res.body, {
-      headers: {
-        "Content-Type": "text/event-stream",
-        "Cache-Control": "no-cache",
-        Connection: "keep-alive",
-      },
-    });
+    // Backend returns JSON — forward it as-is
+    const data = await res.json();
+    return NextResponse.json(data);
   } catch {
-    // Backend not running — return mock response for demo
-    const body = await req.json().catch(() => ({}));
-    return mockResponse(body.messages?.at(-1)?.content || "");
+    // Backend not running — return rich mock JSON with slots so UI demo works
+    return NextResponse.json(buildMockPayload(userMessage));
   }
 }
 
-function mockResponse(userMessage: string): Response {
+function buildMockPayload(userMessage: string) {
   const lower = userMessage.toLowerCase();
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const day = tomorrow.toISOString().split("T")[0];
 
   let reply =
     "I can help you book a session! Could you tell me your preferred date, time, and which speaker or event you'd like to attend?";
+  let suggested_slots: { start: string; end: string }[] = [];
+  let booked_slots: { start: string; end: string }[] = [];
 
-  if (lower.includes("tuesday") || lower.includes("monday") || lower.includes("friday")) {
+  if (
+    lower.includes("confirm") ||
+    lower.includes("yes") ||
+    lower.includes("book it") ||
+    lower.includes("book a meeting")
+  ) {
     reply =
-      "I found available slots for that day. Here are your options:\n\n• 10:00 AM – 11:00 AM (Available)\n• 2:00 PM – 3:00 PM (Available)\n• 4:30 PM – 5:30 PM (Available)\n\nWhich time works best for you?";
-  } else if (lower.includes("elon") || lower.includes("musk")) {
+      "✅ Booking confirmed!\n\n📅 Date: " +
+      day +
+      "\n⏰ Time: 3:00 PM UTC\n📍 Format: Virtual\n\nYou'll receive a calendar invite shortly. Is there anything else I can help with?";
+    const s = new Date(`${day}T15:00:00Z`);
+    booked_slots = [{ start: s.toISOString(), end: new Date(s.getTime() + 3600000).toISOString() }];
+  } else if (
+    lower.includes("available") ||
+    lower.includes("slot") ||
+    lower.includes("schedule") ||
+    lower.includes("availability") ||
+    lower.includes("tomorrow") ||
+    lower.includes("monday") ||
+    lower.includes("tuesday") ||
+    lower.includes("friday")
+  ) {
     reply =
-      "Elon Musk has limited availability. Next open slots:\n\n• Aug 22 at 9:00 AM UTC\n• Aug 25 at 3:00 PM UTC\n\nWould you like me to book one of these?";
-  } else if (lower.includes("confirm") || lower.includes("yes") || lower.includes("book it")) {
-    reply =
-      "Booking confirmed! Here's your summary:\n\n📅 Date: Aug 22, 2026\n⏰ Time: 9:00 AM UTC\n👤 Speaker: Elon Musk\n📍 Format: Virtual (link sent to your email)\n\nYou'll receive a calendar invite shortly. Is there anything else I can help with?";
-  } else if (lower.includes("available") || lower.includes("availability")) {
-    reply =
-      "Let me check the calendar... I see several open slots this week. What type of session are you looking for — a 1:1 with a speaker, a workshop, or a networking session?";
+      "I found available slots for that day. Here are your options:\n\n• 10:00 AM – 11:00 AM (Available)\n• 2:00 PM – 3:00 PM (Available)\n• 4:00 PM – 5:00 PM (Available)\n\nWhich time works best for you?";
+    suggested_slots = [10, 14, 16].map((h) => {
+      const s = new Date(`${day}T${h.toString().padStart(2, "0")}:00:00Z`);
+      return { start: s.toISOString(), end: new Date(s.getTime() + 3600000).toISOString() };
+    });
   }
 
-  const data = JSON.stringify({ content: reply });
-  const stream = new ReadableStream({
-    start(controller) {
-      // Simulate streaming by chunking the reply
-      const words = reply.split(" ");
-      let i = 0;
-      const interval = setInterval(() => {
-        if (i >= words.length) {
-          controller.enqueue(new TextEncoder().encode("data: [DONE]\n\n"));
-          controller.close();
-          clearInterval(interval);
-          return;
-        }
-        const chunk = words.slice(i, i + 3).join(" ") + " ";
-        controller.enqueue(
-          new TextEncoder().encode(
-            `data: ${JSON.stringify({ content: chunk })}\n\n`
-          )
-        );
-        i += 3;
-      }, 80);
+  return {
+    response: reply,
+    state: {
+      suggested_slots,
+      booked_slots,
     },
-  });
-
-  return new Response(stream, {
-    headers: {
-      "Content-Type": "text/event-stream",
-      "Cache-Control": "no-cache",
-    },
-  });
+  };
 }
-
-

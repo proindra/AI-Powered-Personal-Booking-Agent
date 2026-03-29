@@ -1,0 +1,8 @@
+#!/bin/sh
+'''exec' "/Users/pavankishorm/Documents/My Projects/AI-Powered-Personal-Booking-Agent/backend/.ven/bin/python3.11" "$0" "$@"
+' '''
+import sys
+from pip._internal.cli.main import main
+if __name__ == '__main__':
+    sys.argv[0] = sys.argv[0].removesuffix('.exe')
+    sys.exit(main())

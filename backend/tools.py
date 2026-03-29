@@ -136,7 +136,7 @@ def suggest_slots(
 # ── Tool 3: Booking Tool ──────────────────────────────────────────────────────
 
 @tool
-def create_booking(
+def add_to_google_calendar(
     title: str,
     date: str,
     time: str,
