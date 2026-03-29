@@ -5,6 +5,8 @@ import { createGoogleCalendarEvent, CalendarEventDetails, requestCalendarAccess,
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import VerticalTimeline from "./VerticalTimeline";
+import CalendarDashboard from "./CalendarDashboard";
+import FullCalendarDashboard from "./FullCalendarDashboard";
 
 interface Message {
   role: "user" | "assistant";
@@ -57,7 +59,7 @@ export default function BookingChat() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [backendUrl, setBackendUrl] = useState("");
   const [backendSaved, setBackendSaved] = useState(false);
-  const [eventsWindowOpen, setEventsWindowOpen] = useState(false);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   
   // Timeline widget state
   const [calendarState, setCalendarState] = useState<{ bookedSlots: any[]; suggestedSlots: any[] }>({
@@ -258,6 +260,7 @@ export default function BookingChat() {
 
     try {
       const authSession = getSession();
+      const langgraphUrl = process.env.NEXT_PUBLIC_LANGGRAPH_API_URL || "http://localhost:8123";
       
       // Capture the current full context for the API
       const currentMessages = activeSession?.messages || [WELCOME];
@@ -266,9 +269,7 @@ export default function BookingChat() {
         content: m.content
       }));
 
-      // Route through the Next.js API proxy (/api/booking) to avoid CORS issues.
-      // The proxy in app/api/booking/route.ts forwards the request to the FastAPI backend.
-      const res = await fetch(`/api/booking`, {
+      const res = await fetch(`${langgraphUrl}/chat`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -285,35 +286,11 @@ export default function BookingChat() {
       const reply = data.response || data.message || "I received your request. Let me help you with that!";
       
       // Parse LangGraph state for the calendar widget
-      const newBooked: any[] = data.state?.booked_slots || [];
-      const newSuggested: any[] = data.state?.suggested_slots || [];
-      
-      const replyLower = reply.toLowerCase();
-      const hasBookingKeyword = replyLower.includes("booking confirmed") || replyLower.includes("✅") ||
-        replyLower.includes("slots") || replyLower.includes("available") || replyLower.includes("schedule") ||
-        replyLower.includes("appointment") || replyLower.includes("booked");
-
-      let bookedToShow = newBooked;
-      let suggestedToShow = newSuggested;
-
-      // If backend sent no slots but reply text mentions booking/slots, generate demo slots for UI
-      if (hasBookingKeyword && newBooked.length === 0 && newSuggested.length === 0) {
-        const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate() + 1);
-        const day = tomorrow.toISOString().split("T")[0];
-        if (replyLower.includes("confirmed") || replyLower.includes("✅")) {
-          const start = new Date(`${day}T15:00:00Z`);
-          bookedToShow = [{ start: start.toISOString(), end: new Date(start.getTime() + 3600000).toISOString() }];
-        } else {
-          suggestedToShow = [10, 14, 16].map(h => {
-            const s = new Date(`${day}T${h.toString().padStart(2, "0")}:00:00Z`);
-            return { start: s.toISOString(), end: new Date(s.getTime() + 3600000).toISOString() };
-          });
-        }
-      }
-
-      if (bookedToShow.length > 0 || suggestedToShow.length > 0) {
-        setCalendarState({ bookedSlots: bookedToShow, suggestedSlots: suggestedToShow });
-        setEventsWindowOpen(true);
+      if (data.state) {
+        setCalendarState({
+          bookedSlots: data.state.booked_slots || [],
+          suggestedSlots: data.state.suggested_slots || []
+        });
       }
 
       updateMessages(prev => [...prev, { role: "assistant", content: reply }]);
@@ -404,7 +381,13 @@ export default function BookingChat() {
           ))}
         </div>
 
-        {/* Removed Vertical Timeline from History sidebar */}
+        {/* Vertical Timeline Widget block */}
+        <div className="mx-3 mt-1 mb-2 h-[260px] shrink-0 rounded-2xl border border-white/10 overflow-hidden relative shadow-[0_10px_40px_rgba(0,0,0,0.3)] bg-gradient-to-b from-white/[0.03] to-transparent">
+          <VerticalTimeline 
+            bookedSlots={calendarState.bookedSlots} 
+            suggestedSlots={calendarState.suggestedSlots} 
+          />
+        </div>
 
         {/* Footer */}
         <div className="px-4 py-3 shrink-0 text-center opacity-60">
@@ -439,8 +422,8 @@ export default function BookingChat() {
             <span className="material-symbols-outlined text-[20px]">add_comment</span>
           </button>
           <button
-            onClick={() => router.push("/profile")}
-            title="Calendar Dashboard"
+            onClick={() => setIsCalendarOpen(true)}
+            title={calendarConnected ? "Google Calendar connected" : "Connect Google Calendar"}
             className="relative w-10 h-10 rounded-xl flex items-center justify-center transition-all cursor-pointer group"
             style={{ color: calendarConnected ? '#14f1d9' : '#8e959c' }}
           >
@@ -544,39 +527,26 @@ export default function BookingChat() {
           )}
         </div>
       </div>
-
-      {/* ── Events & Availability Side Window ──────────────────────────────── */}
-      <div className={`${eventsWindowOpen ? "w-[300px]" : "w-0"} shrink-0 h-full bg-black/60 border-l border-white/10 flex flex-col transition-all duration-300 overflow-hidden backdrop-blur-2xl z-30 shadow-[-20px_0_40px_rgba(0,0,0,0.5)]`}>
-        {/* Header */}
-        <div className="flex items-center justify-between px-5 py-5 border-b border-white/10 shrink-0">
-          <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-[#14f1d9] text-[18px]">event_available</span>
-            <span className="text-[12px] font-bold uppercase tracking-[0.2em] text-[#14f1d9]">Availability</span>
-          </div>
-          <button
-            onClick={() => setEventsWindowOpen(false)}
-            className="w-7 h-7 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center transition-all text-white/60 hover:text-white"
-            title="Close"
-          >
-            <span className="material-symbols-outlined text-[16px]">close_fullscreen</span>
-          </button>
-        </div>
-        
-        {/* Vertical Timeline content */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4" style={{ scrollbarWidth: "none" }}>
-          {!calendarState.bookedSlots.length && !calendarState.suggestedSlots.length ? (
-            <div className="h-full flex flex-col items-center justify-center text-white/30 text-[13px] text-center px-4">
-              <span className="material-symbols-outlined text-[32px] mb-2 opacity-50">event_busy</span>
-              <p>No events or availability to show right now.</p>
-            </div>
-          ) : (
-            <VerticalTimeline 
-              bookedSlots={calendarState.bookedSlots} 
-              suggestedSlots={calendarState.suggestedSlots} 
-            />
-          )}
-        </div>
-      </div>
+      
+      {calendarConnected && isCalendarOpen ? (
+        <FullCalendarDashboard 
+            onBack={() => setIsCalendarOpen(false)} 
+            onDisconnect={() => {
+                clearCalendarToken();
+                setCalendarConnected(false);
+                setIsCalendarOpen(true); // Keep the side panel open to show the connect button
+            }}
+        />
+      ) : (
+        <CalendarDashboard 
+          isOpen={isCalendarOpen} 
+          onClose={() => setIsCalendarOpen(false)} 
+          calendarConnected={calendarConnected} 
+          connectCalendar={connectCalendar} 
+          disconnectCalendar={disconnectCalendar} 
+          calendarState={calendarState} 
+        />
+      )}
     </div>
   );
 }

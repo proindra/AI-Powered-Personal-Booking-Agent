@@ -6,6 +6,7 @@ import dynamic from "next/dynamic";
 import BookingPageClient from "@/components/BookingPageClient";
 import { TypeAnimation } from 'react-type-animation';
 import { getSession } from "@/lib/auth/types";
+import AddEventSection from "@/components/AddEventSection";
 
 const EventStackScroll = dynamic(() => import("@/components/EventStackScroll"), {
   ssr: false,
@@ -176,6 +177,9 @@ export default function EventsPage() {
           </div>
         </div>
       </section>
+
+      {/* ADD UPCOMING EVENT */}
+      <AddEventSection />
 
       {/* UPCOMING EVENTS — SCROLL STACK */}
       <section className="scroll-mt-32" id="upcoming-events">

@@ -145,3 +145,24 @@ export const createGoogleCalendarEvent = async (
     return { success: false, error: err.message };
   }
 };
+
+/** Helper function to fetch events from the user's Google Calendar */
+export const fetchGoogleCalendarEvents = async (
+  accessToken: string,
+  timeMin: string,
+  timeMax: string
+): Promise<any[]> => {
+  try {
+    const res = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${encodeURIComponent(timeMin)}&timeMax=${encodeURIComponent(timeMax)}&singleEvents=true&orderBy=startTime`, {
+      method: 'GET',
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    if (res.status === 401) throw new Error("401");
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.items || [];
+  } catch (err: any) {
+    if (err.message === "401") throw err;
+    return [];
+  }
+};

@@ -139,45 +139,15 @@ function Band({ maxSpeed = 50, minSpeed = 0, isMobile = false, image }: any) {
   useEffect(() => {
     if (!image) { setSafeImageUrl(ICON_PATH); return; }
     let cancelled = false;
-
-    const loadRefinedImage = async () => {
-      try {
-        const response = await fetch(image);
-        
-        // 1. Check for HTTP errors (like 429 or 403)
-        if (!response.ok) {
-          throw new Error(`Profile image fetch failed: ${response.status}`);
-        }
-
-        // 2. Verify content type is an image, not HTML (base64 of HTML crashes textures)
-        const contentType = response.headers.get('content-type');
-        if (contentType && !contentType.startsWith('image/')) {
-          throw new Error(`Profile image fetch returned non-image content: ${contentType}`);
-        }
-
-        const blob = await response.blob();
-        const dataUrl = await new Promise<string>((res, rej) => {
-          const reader = new FileReader();
-          reader.onload = () => res(reader.result as string);
-          reader.onerror = () => rej(new Error('FileReader failed'));
-          reader.readAsDataURL(blob);
-        });
-
-        // 3. Final check: ensure we didn't accidentally get an HTML-based data URL
-        if (!cancelled) {
-          if (dataUrl.startsWith('data:text/html')) {
-            setSafeImageUrl(ICON_PATH);
-          } else {
-            setSafeImageUrl(dataUrl);
-          }
-        }
-      } catch (err) {
-        console.warn('Lanyard image load failed, falling back to icon:', err);
-        if (!cancelled) setSafeImageUrl(ICON_PATH);
-      }
-    };
-
-    loadRefinedImage();
+    fetch(image)
+      .then(r => r.blob())
+      .then(blob => new Promise<string>((res) => {
+        const reader = new FileReader();
+        reader.onload = () => res(reader.result as string);
+        reader.readAsDataURL(blob);
+      }))
+      .then(dataUrl => { if (!cancelled) setSafeImageUrl(dataUrl); })
+      .catch(() => { if (!cancelled) setSafeImageUrl(ICON_PATH); });
     return () => { cancelled = true; };
   }, [image]);
 
