@@ -1,3 +1,5 @@
+# STILL WE ARE WORKING ON IT
+
 # ConnectSphere
 
 A kinetic, single-page event platform built with **Next.js 16**, **TypeScript**, and **Tailwind CSS**. ConnectSphere connects founders, engineers, designers, and marketers through live conferences, lectures, workshops, and AI-powered session booking.
