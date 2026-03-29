@@ -99,19 +99,15 @@ copy .env.example .env
 Copy-Item .env.example .env
 ```
 
-Open `.env` and fill in your LLM credentials. 
-
-> [!IMPORTANT]
-> **Why is my code "broken" on another laptop?**
-> The `.env` file contains secret keys and is EXCLUDED from Git for security. On a new machine, you MUST create it manually from `.env.example`.
+Open `.env` and fill in your LLM credentials:
 
 ```env
-# Pick one provider (gemini is recommended for this setup)
+# Pick one provider
 LLM_PROVIDER=gemini          # or: openai
 
 # Google Gemini
 GOOGLE_API_KEY=AIza...
-GEMINI_MODEL=gemini-flash-latest
+GEMINI_MODEL=gemini-1.5-flash
 
 # OpenAI (only if LLM_PROVIDER=openai)
 OPENAI_API_KEY=sk-...
@@ -126,39 +122,29 @@ OPENAI_MODEL=gpt-4o-mini
 
 **macOS**
 ```bash
-uvicorn main:app --reload --port 8123
+uvicorn main:app --reload --port 8000
 ```
 
-Backend is now live at **http://localhost:8123**
+**Windows**
+```powershell
+uvicorn main:app --reload --port 8000
+```
+
+Backend is now live at **http://localhost:8000**
 
 Verify it's running:
 
 **macOS**
 ```bash
-curl http://localhost:8123/health
+curl http://localhost:8000/health
 # → {"status":"ok"}
 ```
 
 **Windows (PowerShell)**
 ```powershell
-Invoke-RestMethod http://localhost:8123/health
+Invoke-RestMethod http://localhost:8000/health
 # → status : ok
 ```
-
----
-
-## 🔒 Google Cloud Console Requirements (CRITICAL)
-
-For Sign-In and Calendar to work on a new machine, you **must** update your [Google Cloud Console](https://console.cloud.google.com/) OAuth 2.0 Client credentials:
-
-1.  **Authorized JavaScript origins**:
-    *   `http://localhost:3000`
-2.  **Authorized redirect URIs**:
-    *   `http://localhost:3000`
-    *   `http://localhost:3000/signin`
-
-> [!CAUTION]
-> If you don't add these, Google will throw a `400: redirect_uri_mismatch` error.
 
 ---
 
@@ -211,7 +197,7 @@ New-Item .env.local -ItemType File
 Then open it in any editor and add:
 
 ```env
-NEXT_PUBLIC_LANGGRAPH_API_URL=http://localhost:8123
+LANGGRAPH_API_URL=http://localhost:8000
 NEXT_PUBLIC_GOOGLE_CLIENT_ID=your_google_client_id_here
 ```
 
@@ -293,8 +279,8 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 - Re-run `pip install -r requirements.txt` and check for errors
 
 **"Could not connect to booking agent" in chat**
-- Confirm the backend is running on port 8123
-- Check `NEXT_PUBLIC_LANGGRAPH_API_URL` in `frontend/.env.local` is `http://localhost:8123`
+- Confirm the backend is running on port 8000
+- Check `LANGGRAPH_API_URL` in `frontend/.env.local` is `http://localhost:8000`
 
 **`npm run dev` fails with "next: command not found"**
 - Run `npm install` inside the `frontend/` directory first
