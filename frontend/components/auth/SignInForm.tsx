@@ -8,7 +8,7 @@ import { goto } from '@/lib/auth/config';
 
 export default function SignInForm() {
   const searchParams = useSearchParams();
-  const fromBooking = searchParams?.get('from') === 'booking';
+  const restrictGuest = searchParams?.get('from') === 'events' || searchParams?.get('from') === 'calendar' || searchParams?.get('from') === 'watchlist';
   const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -70,25 +70,25 @@ export default function SignInForm() {
         </div>
       )}
 
-      {/* Booking-context warning banner */}
-      {fromBooking && (
+      {/* Dashboard-context warning banner */}
+      {restrictGuest && (
         <div style={{
           marginBottom: '1.5rem',
           padding: '1rem 1.25rem',
-          background: 'rgba(245,158,11,0.08)',
-          border: '1px solid rgba(245,158,11,0.3)',
-          borderLeft: '3px solid #F59E0B',
+          background: 'rgba(6,182,212,0.08)',
+          border: '1px solid rgba(6,182,212,0.3)',
+          borderLeft: '3px solid #06b6d4',
           display: 'flex',
           alignItems: 'flex-start',
           gap: '0.75rem',
         }}>
-          <span style={{ fontSize: '1.1rem', color: '#F59E0B', flexShrink: 0, marginTop: '0.05rem' }}>⚠️</span>
+          <span style={{ fontSize: '1.1rem', color: '#06b6d4', flexShrink: 0, marginTop: '0.05rem' }}>ℹ️</span>
           <div>
-            <p style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#F59E0B', marginBottom: '0.3rem' }}>
+            <p style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.12em', color: '#06b6d4', marginBottom: '0.3rem' }}>
               Google Sign-In Required
             </p>
             <p style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.45)', lineHeight: 1.5 }}>
-              AI Booking requires a Google account for calendar access. Guest mode does not work here — please use <strong style={{ color: 'rgba(255,255,255,0.7)' }}>Continue with Google</strong> below.
+              The Dashboard requires a Google account for event synchronization and calendar access. Guest mode is for browsing only.
             </p>
           </div>
         </div>
@@ -143,10 +143,10 @@ export default function SignInForm() {
         <span style={{ fontSize:'1rem', color:'rgba(0, 102, 255,0.6)' }}>→</span>
       </button>
 
-      {/* Guest Button — disabled/dimmed when coming from booking */}
+      {/* Guest Button — disabled/dimmed when coming from dashboard */}
       <button
-        onClick={fromBooking ? undefined : handleGuest}
-        disabled={fromBooking}
+        onClick={restrictGuest ? undefined : handleGuest}
+        disabled={restrictGuest}
         style={{
           width: '100%',
           display: 'flex',
@@ -156,13 +156,13 @@ export default function SignInForm() {
           background: 'transparent',
           border: '1px solid rgba(255,255,255,0.1)',
           color: '#fff',
-          cursor: fromBooking ? 'not-allowed' : 'pointer',
+          cursor: restrictGuest ? 'not-allowed' : 'pointer',
           transition: 'all 0.25s',
           textAlign: 'left',
-          opacity: fromBooking ? 0.35 : 1,
-          filter: fromBooking ? 'grayscale(1)' : 'none',
+          opacity: restrictGuest ? 0.35 : 1,
+          filter: restrictGuest ? 'grayscale(1)' : 'none',
         }}
-        onMouseEnter={e => { if (!fromBooking) { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.04)'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.25)'; } }}
+        onMouseEnter={e => { if (!restrictGuest) { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.04)'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.25)'; } }}
         onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.1)'; }}
       >
         <span style={{ width:36, height:36, display:'flex', alignItems:'center', justifyContent:'center', background:'rgba(255,255,255,0.04)', flexShrink:0 }}>
@@ -188,4 +188,3 @@ export default function SignInForm() {
     </div>
   );
 }
-

@@ -1,5 +1,5 @@
 import SignInForm from '@/components/auth/SignInForm';
-import LanyardLoader from '@/components/LanyardLoader';
+import LanyardLoader from '@/components/3d/LanyardLoader';
 import { Suspense } from 'react';
 
 export default function SignInPage() {
@@ -32,7 +32,7 @@ export default function SignInPage() {
         <div className="relative z-10 mt-8">
           <span className="inline-flex items-center gap-2 px-3 py-1.5 border border-brand/30 bg-brand/5 text-[0.6rem] font-bold tracking-[0.4em] text-brand uppercase">
             <span className="w-1.5 h-1.5 rounded-full bg-brand animate-pulse inline-block" />
-            Connect Sphere
+            4th Dimension
           </span>
         </div>
 
@@ -80,7 +80,7 @@ export default function SignInPage() {
 
         {/* Footer */}
         <p className="relative z-10 text-[0.55rem] uppercase tracking-[0.35em] font-bold text-white/15">
-          Team Net-Y @ 2026
+          4th Dimension @ 2026
         </p>
       </div>
 

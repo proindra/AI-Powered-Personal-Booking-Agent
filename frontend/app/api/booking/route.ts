@@ -3,11 +3,15 @@ import { NextRequest, NextResponse } from "next/server";
 const BACKEND_URL = process.env.LANGGRAPH_API_URL || "http://localhost:8000";
 
 export async function POST(req: NextRequest) {
-  try {
-    const body = await req.json();
+  let body: { messages?: { role: string; content: string }[]; calendar_token?: string } = {};
 
-    // Proxy to your LangGraph FastAPI backend
-    // Forward calendar_token if the frontend sent one (Google Calendar access)
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+  }
+
+  try {
     const res = await fetch(`${BACKEND_URL}/chat`, {
       method: "POST",
       headers: {
@@ -20,11 +24,9 @@ export async function POST(req: NextRequest) {
     });
 
     if (!res.ok) {
-      // Return a helpful mock response when backend isn't connected
-      return mockResponse(body.messages?.at(-1)?.content || "");
+      return mockResponse(body.messages?.at(-1)?.content ?? "");
     }
 
-    // Stream the response back
     return new Response(res.body, {
       headers: {
         "Content-Type": "text/event-stream",
@@ -33,17 +35,15 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch {
-    // Backend not running — return mock response for demo
-    const body = await req.json().catch(() => ({}));
-    return mockResponse(body.messages?.at(-1)?.content || "");
+    // Backend unreachable — return mock SSE response for demo
+    return mockResponse(body.messages?.at(-1)?.content ?? "");
   }
 }
 
 function mockResponse(userMessage: string): Response {
   const lower = userMessage.toLowerCase();
-
   let reply =
-    "I can help you book a session! Could you tell me your preferred date, time, and which speaker or event you'd like to attend?";
+    "I can help you book a session! Could you tell me your preferred date, time, and which event you'd like to attend?";
 
   if (lower.includes("tuesday") || lower.includes("monday") || lower.includes("friday")) {
     reply =
@@ -56,13 +56,11 @@ function mockResponse(userMessage: string): Response {
       "Booking confirmed! Here's your summary:\n\n📅 Date: Aug 22, 2026\n⏰ Time: 9:00 AM UTC\n👤 Speaker: Elon Musk\n📍 Format: Virtual (link sent to your email)\n\nYou'll receive a calendar invite shortly. Is there anything else I can help with?";
   } else if (lower.includes("available") || lower.includes("availability")) {
     reply =
-      "Let me check the calendar... I see several open slots this week. What type of session are you looking for — a 1:1 with a speaker, a workshop, or a networking session?";
+      "Let me check the calendar… I see several open slots this week. What type of session are you looking for — a 1:1 with a speaker, a workshop, or a networking session?";
   }
 
-  const data = JSON.stringify({ content: reply });
   const stream = new ReadableStream({
     start(controller) {
-      // Simulate streaming by chunking the reply
       const words = reply.split(" ");
       let i = 0;
       const interval = setInterval(() => {
@@ -74,9 +72,7 @@ function mockResponse(userMessage: string): Response {
         }
         const chunk = words.slice(i, i + 3).join(" ") + " ";
         controller.enqueue(
-          new TextEncoder().encode(
-            `data: ${JSON.stringify({ content: chunk })}\n\n`
-          )
+          new TextEncoder().encode(`data: ${JSON.stringify({ content: chunk })}\n\n`)
         );
         i += 3;
       }, 80);
@@ -90,5 +86,3 @@ function mockResponse(userMessage: string): Response {
     },
   });
 }
-
-

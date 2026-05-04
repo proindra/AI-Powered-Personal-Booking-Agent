@@ -29,12 +29,10 @@ function smoothScrollToHash(hash: string) {
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
-  // Always start as false (matches SSR) — read localStorage after mount to avoid hydration mismatch
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('auth_token');
-    setIsLoggedIn(!!(token && token !== ''));
+    setIsLoggedIn(!!getSession());
   }, []);
 
   function handleLogoClick(e: React.MouseEvent) {
@@ -64,24 +62,22 @@ export default function Navbar() {
 
   return (
     <header className="w-full px-6 lg:px-8 py-5 lg:py-8 flex justify-between items-center z-50 fixed top-0 left-0 backdrop-blur-xl bg-white/5 border-b border-white/10 transition-all duration-500">
-      {/* Brand Logo */}
-      <div className="brand-logo flex items-center gap-1">
-        <Link
-          href="/"
-          onClick={handleLogoClick}
-          className="text-xl font-black leading-none tracking-tighter hover:scale-105 transition-transform cursor-pointer"
-        >
-          CONNECT<br />
-          <span className="text-brand">SPHERE</span>
-        </Link>
-      </div>
+      {/* Logo */}
+      <Link
+        href="/"
+        onClick={handleLogoClick}
+        className="text-xl font-black leading-none tracking-tighter hover:scale-105 transition-transform"
+      >
+        4TH<br />
+          <span className="text-brand">DIMENSION</span>
+      </Link>
 
-      {/* Nav Links */}
+      {/* Nav links */}
       <nav className="flex items-center gap-4 lg:gap-10 text-[9px] md:text-xs overflow-x-auto whitespace-nowrap px-4 py-2">
         {links.map((link) => {
-          const basePath = link.href.split("#")[0];
           const hasHash = link.href.includes("#");
-          const isActive = !hasHash && pathname === (basePath === "" ? "/" : basePath);
+          const basePath = link.href.split("#")[0];
+          const isActive = !hasHash && pathname === (basePath || "/");
           return (
             <Link
               key={link.href}
@@ -96,9 +92,8 @@ export default function Navbar() {
       </nav>
 
       {/* CTA */}
-      <div className="cta-nav flex gap-4 items-center">
+      <div className="flex gap-4 items-center">
         <UserAvatar />
-        {/* Show Sign In when not logged in, or while checking (null) */}
         {!isLoggedIn && (
           <Link href="/signin" className="nav-link text-[10px] sm:text-xs">
             Sign In
@@ -113,5 +108,3 @@ export default function Navbar() {
     </header>
   );
 }
-
-

@@ -16,7 +16,6 @@ export default function UserAvatar() {
     else if (session?.type === 'guest') setProfile({ name: 'Guest', email: '', picture: '' });
   }, []);
 
-  // Close dropdown on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
@@ -25,11 +24,6 @@ export default function UserAvatar() {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const handleSignOut = () => {
-    clearSession();
-    goto('/signin');
-  };
-
   if (!profile) return null;
 
   return (
@@ -37,6 +31,7 @@ export default function UserAvatar() {
       <button
         onClick={() => setOpen(o => !o)}
         className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+        aria-label="User menu"
       >
         {profile.picture ? (
           <img
@@ -54,14 +49,12 @@ export default function UserAvatar() {
 
       {open && (
         <div className="absolute right-0 top-10 w-56 bg-[#111] border border-white/10 shadow-xl z-50 p-1">
-          {/* Profile info */}
           <div className="px-4 py-3 border-b border-white/10">
             <p className="text-sm font-bold text-white truncate">{profile.name}</p>
             {profile.email && (
               <p className="text-[0.65rem] text-white/40 truncate mt-0.5">{profile.email}</p>
             )}
           </div>
-          {/* Profile link */}
           <Link
             href="/profile"
             onClick={() => setOpen(false)}
@@ -70,9 +63,8 @@ export default function UserAvatar() {
             <span className="material-symbols-outlined text-sm">person</span>
             View Profile
           </Link>
-          {/* Sign out */}
           <button
-            onClick={handleSignOut}
+            onClick={() => { clearSession(); goto('/signin'); }}
             className="w-full text-left px-4 py-2.5 text-xs font-bold uppercase tracking-widest text-white/60 hover:text-white hover:bg-white/5 transition-all flex items-center gap-2"
           >
             <span className="material-symbols-outlined text-sm">logout</span>

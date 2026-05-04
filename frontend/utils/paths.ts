@@ -1,5 +1,7 @@
 const isProd = process.env.NODE_ENV === 'production';
-export const basePath = isProd ? '/AI-Powered-Personal-Booking-Agent' : '';
+export const basePath = isProd
+  ? (process.env.NEXT_PUBLIC_BASE_PATH ?? '/AI-Powered-Personal-Booking-Agent')
+  : '';
 
 export const getPath = (path: string) => {
   if (path.startsWith('http')) return path;

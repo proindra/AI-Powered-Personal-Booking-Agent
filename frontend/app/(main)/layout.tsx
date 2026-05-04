@@ -1,6 +1,6 @@
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import ScrollEffects from "@/components/ScrollEffects";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+import ScrollEffects from "@/components/layout/ScrollEffects";
 import Script from "next/script";
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {

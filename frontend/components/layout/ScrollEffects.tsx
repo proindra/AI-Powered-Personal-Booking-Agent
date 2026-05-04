@@ -8,7 +8,6 @@ const SECTIONS = [
   { id: "upcoming-events",   navHref: "/#upcoming-events" },
   { id: "featured-speakers", navHref: "/#featured-speakers" },
   { id: "networking",        navHref: "/#networking" },
-  { id: "booking",           navHref: "/#booking" },
   { id: "contact",           navHref: "/#contact" },
 ];
 
@@ -19,6 +18,8 @@ export default function ScrollEffects() {
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const win = window as any;
+    let cancelled = false;
+
     const init = () => {
       if (win.lenis) return;
       if (!win.Lenis) return;
@@ -28,16 +29,28 @@ export default function ScrollEffects() {
         smooth: true,
       });
       const raf = (time: number) => {
+        // Stop the loop if Lenis was destroyed or the component unmounted
+        if (cancelled || !win.lenis) return;
         win.lenis.raf(time);
         requestAnimationFrame(raf);
       };
       requestAnimationFrame(raf);
     };
+
     init();
     const interval = setInterval(() => {
       if (win.Lenis) { init(); clearInterval(interval); }
     }, 100);
-    return () => clearInterval(interval);
+
+    // Destroy Lenis when this layout unmounts (e.g. navigating to dashboard)
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+      if (win.lenis) {
+        win.lenis.destroy();
+        win.lenis = null;
+      }
+    };
   }, []);
 
   // Reveal animations + navbar shrink + active section tracking

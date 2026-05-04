@@ -34,11 +34,14 @@
 
 /* ── Base ─────────────────────────────────────────── */
 body {
-  background-color: #0e0e0e;
-  color: #ffffff;
+  background-color: #020813;
+  color: #d4e4fa;
   -webkit-font-smoothing: antialiased;
   -ms-overflow-style: none;
   scrollbar-width: none;
+  background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
 }
 
 ::-webkit-scrollbar { display: none; }
@@ -290,27 +293,7 @@ body {
 }
 
 @layer utilities {
-  .text-brand {
-      color: #00ff22;
+  .pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
   }
-
-  /* Custom AI Assistant Design Overlay */
-  .orb {
-    width: 350px;
-    height: 250px;
-    background: radial-gradient(circle at 30% 30%, rgba(20, 241, 217, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 70% 70%, rgba(30, 60, 100, 0.2) 0%, transparent 50%);
-    border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
-    filter: blur(20px);
-    animation: orb-morph 15s ease-in-out infinite alternate;
-    box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.5), 
-                0 0 50px rgba(20, 241, 217, 0.05);
-    border: 1px solid rgba(255,255,255,0.02);
-  }
-}
-
-@keyframes orb-morph {
-  0% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; }
-  50% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
-  100% { border-radius: 40% 60% 70% 30% / 50% 60% 30% 60%; }
 }

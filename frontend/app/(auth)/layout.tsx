@@ -1,5 +1,5 @@
-import SignInNavbar from "@/components/SignInNavbar";
-import ScrollEffects from "@/components/ScrollEffects";
+import SignInNavbar from "@/components/layout/SignInNavbar";
+import ScrollEffects from "@/components/layout/ScrollEffects";
 import Script from "next/script";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {

@@ -2,7 +2,7 @@
 import { useRef, useEffect, useState } from "react";
 import { createGoogleCalendarEvent } from "@/lib/auth/google";
 
-const STORAGE_KEY = "connect_sphere_events";
+const STORAGE_KEY = "4d_workspace_events";
 
 const DEFAULT_EVENTS = [
   {
@@ -37,7 +37,7 @@ const DEFAULT_EVENTS = [
 
 export type EventItem = (typeof DEFAULT_EVENTS)[0];
 
-export default function EventStackScroll() {
+export default function EventStack() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [scrollRatio, setScrollRatio] = useState(0);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null);
@@ -95,15 +95,7 @@ export default function EventStackScroll() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const scrollToBooking = () => {
-    const t = document.querySelector("#booking");
-    if (!t) return;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const lenis = (window as any).lenis;
-    lenis
-      ? lenis.scrollTo(t, { offset: -128, duration: 1.2 })
-      : window.scrollTo({ top: (t as HTMLElement).getBoundingClientRect().top + window.scrollY - 128, behavior: "smooth" });
-  };
+
 
   const [bookingIndex, setBookingIndex] = useState<number | null>(null);
 
@@ -135,8 +127,10 @@ export default function EventStackScroll() {
   const handleBookSession = async (ev: any, index: number) => {
     const token = localStorage.getItem("calendar_token");
     if (!token) {
-      showToast("Connect Google Calendar in the AI Dashboard first!", "info");
-      setTimeout(scrollToBooking, 1500);
+      showToast("Please sign in with Google to book sessions!", "info");
+      setTimeout(() => {
+        window.location.href = "/signin?from=events";
+      }, 1500);
       return;
     }
 
@@ -169,7 +163,9 @@ export default function EventStackScroll() {
         if (res.error?.includes("invalid authentication") || res.error?.includes("OAuth 2")) {
           showToast("Session expired — please reconnect your Calendar.", "error");
           localStorage.removeItem("calendar_token");
-          setTimeout(scrollToBooking, 2000);
+          setTimeout(() => {
+            window.location.href = "/calendar";
+          }, 2000);
         } else {
           showToast("Booking failed: " + (res.error || "Unknown error."), "error");
         }

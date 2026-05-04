@@ -1,9 +1,9 @@
 "use client";
 import { useState } from "react";
 import { createGoogleCalendarEvent } from "@/lib/auth/google";
-import type { EventItem } from "./EventStackScroll";
+import type { EventItem } from "./EventStack";
 
-const STORAGE_KEY = "connect_sphere_events";
+const STORAGE_KEY = "4d_workspace_events";
 
 const DEFAULT_EVENTS: EventItem[] = [
   {
@@ -56,7 +56,7 @@ const STOCK_IMAGES = [
   "https://images.unsplash.com/photo-1551818255-e6e10975bc17?auto=format&fit=crop&w=1920&q=80",
 ];
 
-export default function AddEventSection() {
+export default function AddEvent() {
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");

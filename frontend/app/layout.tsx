@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import AmbientCanvasLoader from "@/components/AmbientCanvasLoader";
+import AmbientCanvasLoader from "@/components/3d/AmbientCanvasLoader";
 
 export const metadata: Metadata = {
-  title: "Connect Sphere",
+  title: "4th Dimension Workspace",
   description: "AI-Powered Personal Booking Agent",
 };
 

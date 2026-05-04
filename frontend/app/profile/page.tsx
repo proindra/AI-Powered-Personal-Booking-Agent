@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { getSession, AuthSession } from '@/lib/auth/types';
 import { goto } from '@/lib/auth/config';
-import LanyardLoader from '@/components/LanyardLoader';
+import LanyardLoader from '@/components/3d/LanyardLoader';
 import Link from 'next/link';
 import { useCalendar } from '@/lib/calendar/useCalendar';
 import { requestCalendarAccess } from '@/lib/auth/google';

@@ -79,10 +79,10 @@ export default function Footer() {
             <HashLink href="/#upcoming-events" className="text-sm font-black uppercase text-white hover:text-brand transition-colors">Event Calendar</HashLink>
           </div>
           <div className="flex flex-col gap-5">
-            <p className="text-[0.65rem] font-bold tracking-[0.3em] text-white/40 uppercase">AI Booking</p>
-            <HashLink href="/#booking" className="text-sm font-black uppercase text-white hover:text-brand transition-colors">Schedule Session</HashLink>
-            <HashLink href="/#booking" className="text-sm font-black uppercase text-white hover:text-brand transition-colors">LangGraph Agent</HashLink>
-            <HashLink href="/#booking" className="text-sm font-black uppercase text-white hover:text-brand transition-colors">Manage Booking</HashLink>
+            <p className="text-[0.65rem] font-bold tracking-[0.3em] text-white/40 uppercase">Dashboard</p>
+            <Link href="/events" className="text-sm font-black uppercase text-white hover:text-brand transition-colors">Events Dashboard</Link>
+            <Link href="/calendar" className="text-sm font-black uppercase text-white hover:text-brand transition-colors">Calendar Sync</Link>
+            <Link href="/watchlist" className="text-sm font-black uppercase text-white hover:text-brand transition-colors">Your Watchlist</Link>
           </div>
           <div className="flex flex-col gap-5">
             <p className="text-[0.65rem] font-bold tracking-[0.3em] text-white/40 uppercase">Company</p>
@@ -99,10 +99,10 @@ export default function Footer() {
               <svg width="32" height="32" fill="none" stroke="#0066FF" viewBox="0 0 40 40" strokeWidth="4">
                 <path d="M5 30 L15 5 L25 35 L35 10" />
               </svg>
-              <span className="text-xl font-black tracking-tighter">Connect Sphere</span>
+              <span className="text-xl font-black tracking-tighter">4th Dimension</span>
             </div>
             <p className="text-sm text-white/40 leading-relaxed max-w-sm">
-              Whether you lead teams or just launched your career — ConnectSphere helps you grow through live events, expert insights, and real interaction.
+              Whether you lead teams or just launched your career — 4th Dimension helps you grow through live events, expert insights, and real interaction.
             </p>
           </div>
           <div className="lg:justify-self-end w-full lg:w-auto">
@@ -122,12 +122,12 @@ export default function Footer() {
 
         {/* Bottom Bar */}
         <div className="px-8 lg:px-12 pt-6 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-[0.6rem] uppercase tracking-[0.2em] font-bold text-white/30">
-          <p>Team Net-Y @ 2026</p>
+          <p>4th Dimension @ 2026</p>
           <div className="flex flex-wrap justify-center gap-8">
             <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
             <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
           </div>
-          <p>made with love TEAM NET-Y</p>
+          <p>made with love — 4TH DIMENSION</p>
         </div>
 
       </div>
