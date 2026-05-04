@@ -167,8 +167,8 @@ export default function ProfilePage() {
               <span className="w-1 h-1 rounded-full bg-green-500 animate-pulse inline-block" />
               Active Session
             </span>
-            <h1 className="font-black text-4xl lg:text-5xl xl:text-6xl uppercase leading-[0.85] tracking-tighter text-white mb-2 mt-1">
-              USER<br /><span className="text-brand drop-shadow-[0_0_15px_rgba(0,102,255,0.4)]">PROFILE</span>
+            <h1 className="font-black text-4xl lg:text-5xl xl:text-6xl tracking-tighter leading-[0.85] text-white mb-2 mt-1">
+              User<br /><span className="text-brand drop-shadow-[0_0_15px_rgba(0,102,255,0.4)]">Profile</span>
             </h1>
             <p className="text-white/60 text-xs leading-relaxed max-w-[280px]">
               Manage your digital identity via distributed session protocol.
@@ -189,7 +189,7 @@ export default function ProfilePage() {
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <h2 className="text-lg lg:text-xl font-black uppercase tracking-tighter leading-none mb-1 text-white line-clamp-1">
+                <h2 className="text-lg lg:text-xl font-black tracking-tighter leading-none mb-1 text-white line-clamp-1">
                   {session.profile?.name || 'Guest User'}
                 </h2>
                 <div className="text-[9px] font-bold tracking-[0.2em] text-white/50 uppercase">Identity Confirmed</div>

@@ -93,6 +93,27 @@ function SkeletonNode() {
 export default function WatchlistPage() {
   const { events, loading, error, connected, refetch } = useCalendar();
   const [connecting, setConnecting] = useState(false);
+  const [skippedIds, setSkippedIds] = useState<string[]>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("skipped_events");
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch {
+          return [];
+        }
+      }
+    }
+    return [];
+  });
+
+  const toggleSkip = (id: string) => {
+    const next = skippedIds.includes(id)
+      ? skippedIds.filter((i) => i !== id)
+      : [...skippedIds, id];
+    setSkippedIds(next);
+    localStorage.setItem("skipped_events", JSON.stringify(next));
+  };
 
   const handleConnect = () => {
     setConnecting(true);
@@ -111,7 +132,19 @@ export default function WatchlistPage() {
 
   const upcoming = sorted.filter((e) => !isPast(getEventEnd(e)));
   const past = sorted.filter((e) => isPast(getEventEnd(e)));
-  const display = [...upcoming, ...past];
+  
+  // Add a sample past event for demo if needed
+  const samplePast: CalendarEvent = {
+    id: "sample-past",
+    summary: "Completed Workshop: UI Design Systems",
+    description: "A deep dive into building scalable design systems for modern web applications.",
+    location: "Online / Zoom",
+    start: { dateTime: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString() },
+    end: { dateTime: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000 + 3600000).toISOString() },
+    htmlLink: "https://calendar.google.com"
+  };
+
+  const display = [...upcoming, ...past, samplePast];
 
   return (
     <div className="max-w-4xl mx-auto flex flex-col gap-10">
@@ -122,8 +155,8 @@ export default function WatchlistPage() {
           <span className="font-bold text-brand uppercase tracking-[0.3em] text-xs mb-3 block">
             Google Calendar
           </span>
-          <h2 className="font-black text-5xl md:text-6xl uppercase tracking-tighter leading-none text-white mb-3">
-            MY<br /><span className="text-brand">WATCHLIST</span>
+          <h2 className="font-black text-4xl md:text-5xl tracking-tighter leading-none text-white flex items-baseline gap-3 mb-3">
+            My <span className="text-brand">Watchlist</span>
           </h2>
           <p className="text-white/60 text-base">Your upcoming events pulled live from Google Calendar.</p>
         </div>
@@ -208,16 +241,17 @@ export default function WatchlistPage() {
             const urgent = !past && start ? isUrgent(start) : false;
             const allDay = isAllDay(ev);
             const color = getColor(ev.summary);
+            const isSkipped = skippedIds.includes(ev.id || "");
 
             return (
               <div
                 key={ev.id}
-                className={`relative z-10 group transition-all duration-500 ${past ? "opacity-50 hover:opacity-80" : ""}`}
+                className="relative z-10 group transition-all duration-500"
               >
                 {/* Timeline dot */}
                 <div
-                  className={`absolute -left-[37px] md:-left-[69px] top-8 w-5 h-5 rounded-full bg-dark border-[3px] group-hover:scale-125 transition-all duration-300 flex items-center justify-center
-                    ${past ? "border-white/20" : urgent ? "border-red-500 shadow-[0_0_14px_rgba(239,68,68,0.8)]" : `${color.border} ${color.glow}`}`}
+                  className={`absolute -left-[37px] md:-left-[69px] top-8 w-5 h-5 rounded-full bg-dark border-[3px] transition-all duration-300 flex items-center justify-center
+                    ${past || isSkipped ? "border-white/20 opacity-40 grayscale" : urgent ? "border-red-500 shadow-[0_0_14px_rgba(239,68,68,0.8)]" : `${color.border} ${color.glow}`}`}
                 >
                   {urgent && !past && (
                     <div className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />
@@ -229,78 +263,85 @@ export default function WatchlistPage() {
 
                 {/* Card */}
                 <div className={`brutalist-card p-6 md:p-8 relative overflow-hidden group/card ${urgent ? "border-red-500/20" : ""}`}>
-                  <div className={`absolute inset-0 bg-gradient-to-br opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 ${urgent ? "from-red-500/5" : "from-brand/5"} to-transparent`} />
 
-                  <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-5 gap-4 relative z-10">
-                    {/* Left: tags + title */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex flex-wrap gap-2 mb-3">
-                        {/* Status tag */}
-                        {past ? (
-                          <span className="px-3 py-1 bg-white/5 text-white/40 text-[10px] font-bold uppercase tracking-widest border border-white/10">
-                            Past
-                          </span>
-                        ) : urgent ? (
-                          <span className="px-3 py-1 bg-red-500/10 text-red-400 text-[10px] font-bold uppercase tracking-widest border border-red-500/30 animate-pulse flex items-center gap-1">
-                            <span className="material-symbols-outlined text-[12px]">timer</span>
-                            Upcoming Soon
-                          </span>
-                        ) : (
-                          <span className={`px-3 py-1 text-[10px] font-bold uppercase tracking-widest border ${color.pill}`}>
-                            Upcoming
-                          </span>
-                        )}
-                        {/* All-day badge */}
-                        {allDay && (
-                          <span className="px-3 py-1 bg-white/5 text-white/50 text-[10px] font-bold uppercase tracking-widest border border-white/10">
-                            All Day
-                          </span>
+
+                  {/* Content Wrapper (Dimmed when skipped/past) */}
+                  <div className={`flex flex-col transition-all duration-500 ${past || isSkipped ? "opacity-30 grayscale-[0.5]" : ""}`}>
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-5 gap-4 relative z-10">
+                      {/* Left: tags + title */}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-wrap gap-2 mb-3">
+                          {/* Status tag */}
+                          {past ? (
+                            <span className="px-3 py-1 bg-white/5 text-white/40 text-[10px] font-bold uppercase tracking-widest border border-white/10">
+                              Past
+                            </span>
+                          ) : urgent ? (
+                            <span className="px-3 py-1 bg-red-500/10 text-red-400 text-[10px] font-bold uppercase tracking-widest border border-red-500/30 animate-pulse flex items-center gap-1">
+                              <span className="material-symbols-outlined text-[12px]">timer</span>
+                              Upcoming Soon
+                            </span>
+                          ) : (
+                            <span className={`px-3 py-1 text-[10px] font-bold uppercase tracking-widest border ${color.pill}`}>
+                              Upcoming
+                            </span>
+                          )}
+                          {isSkipped && (
+                            <span className="px-3 py-1 bg-white/10 text-white/40 text-[10px] font-bold uppercase tracking-widest border border-white/20 flex items-center gap-1">
+                              <span className="material-symbols-outlined text-[12px]">block</span>
+                              Skipped
+                            </span>
+                          )}
+                          {/* All-day badge */}
+                          {allDay && (
+                            <span className="px-3 py-1 bg-white/5 text-white/50 text-[10px] font-bold uppercase tracking-widest border border-white/10">
+                              All Day
+                            </span>
+                          )}
+                        </div>
+
+                        <h3 className={`text-[22px] md:text-[26px] font-black tracking-tighter leading-tight ${past || isSkipped ? "text-white/40 line-through decoration-white/20" : "text-white"}`}>
+                          {ev.summary || "(No title)"}
+                        </h3>
+
+                        {ev.location && (
+                          <p className="text-white/50 text-xs font-bold tracking-widest mt-2 flex items-center gap-1">
+                            <span className="material-symbols-outlined text-[13px]">location_on</span>
+                            {ev.location}
+                          </p>
                         )}
                       </div>
 
-                      <h3 className={`text-[22px] md:text-[26px] font-black uppercase tracking-tighter leading-tight ${past ? "text-white/50 line-through decoration-white/20" : "text-white"}`}>
-                        {ev.summary || "(No title)"}
-                      </h3>
-
-                      {ev.location && (
-                        <p className="text-white/50 text-xs font-bold uppercase tracking-widest mt-2 flex items-center gap-1">
-                          <span className="material-symbols-outlined text-[13px]">location_on</span>
-                          {ev.location}
-                        </p>
+                      {/* Right: date/time box */}
+                      {start && (
+                        <div className={`text-left md:text-right flex-shrink-0 p-4 border ${past ? "border-white/[0.06] bg-white/[0.02]" : "border-white/[0.08] bg-white/[0.03]"}`}>
+                          <div className={`text-[26px] font-black ${past ? "text-white/40" : color.text}`}>
+                            {formatDay(start)}
+                          </div>
+                          {!allDay && (
+                            <div className="text-white/60 text-xs font-bold uppercase tracking-widest mt-1">
+                              {formatTime(start)}
+                              {end && !isPast(end) && ` — ${formatTime(end)}`}
+                            </div>
+                          )}
+                          {!past && (
+                            <div className={`text-[10px] font-black uppercase tracking-widest mt-1 ${urgent ? "text-red-400" : "text-white/50"}`}>
+                              {formatCountdown(start)}
+                            </div>
+                          )}
+                        </div>
                       )}
                     </div>
 
-                    {/* Right: date/time box */}
-                    {start && (
-                      <div className={`text-left md:text-right flex-shrink-0 p-4 border ${past ? "border-white/[0.06] bg-white/[0.02]" : "border-white/[0.08] bg-white/[0.03]"}`}>
-                        <div className={`text-[26px] font-black ${past ? "text-white/40" : color.text}`}>
-                          {formatDay(start)}
-                        </div>
-                        {!allDay && (
-                          <div className="text-white/60 text-xs font-bold uppercase tracking-widest mt-1">
-                            {formatTime(start)}
-                            {end && !isPast(end) && ` — ${formatTime(end)}`}
-                          </div>
-                        )}
-                        {!past && (
-                          <div className={`text-[10px] font-black uppercase tracking-widest mt-1 ${urgent ? "text-red-400" : "text-white/50"}`}>
-                            {formatCountdown(start)}
-                          </div>
-                        )}
-                      </div>
+                    {/* Description */}
+                    {ev.description && (
+                      <p className="text-white/60 text-sm mb-6 relative z-10 leading-relaxed max-w-2xl line-clamp-2">
+                        {ev.description}
+                      </p>
                     )}
-                  </div>
 
-                  {/* Description */}
-                  {ev.description && (
-                    <p className="text-white/60 text-sm mb-6 relative z-10 leading-relaxed max-w-2xl line-clamp-2">
-                      {ev.description}
-                    </p>
-                  )}
-
-                  {/* Footer actions */}
-                  <div className="flex items-center justify-between border-t border-white/[0.06] pt-5 relative z-10 gap-4 flex-wrap">
-                    <div className="flex items-center gap-2 text-white/40 text-[11px] font-bold uppercase tracking-widest">
+                    {/* Schedule info */}
+                    <div className="flex items-center gap-2 text-white/40 text-[11px] font-bold tracking-widest uppercase">
                       <span className="material-symbols-outlined text-[14px]">schedule</span>
                       {allDay
                         ? "All day event"
@@ -310,13 +351,34 @@ export default function WatchlistPage() {
                         ? formatTime(start)
                         : "No time set"}
                     </div>
+                  </div>
+
+                  {/* Actions (Isolated from content dimming) */}
+                  <div className="flex items-center justify-end border-t border-white/[0.06] pt-5 relative z-10 gap-6 flex-wrap mt-5">
+                    {!past && (
+                      <button
+                        onClick={() => toggleSkip(ev.id || "")}
+                        className={`flex items-center gap-1.5 text-[11px] font-black uppercase tracking-widest transition-all duration-300 ${
+                          isSkipped 
+                          ? "text-brand hover:text-white drop-shadow-[0_0_8px_rgba(0,102,255,0.4)]" 
+                          : "text-red-500/50 hover:text-red-400"
+                        }`}
+                      >
+                        <span className="material-symbols-outlined text-[16px]">
+                          {isSkipped ? "undo" : "block"}
+                        </span>
+                        {isSkipped ? "Unskip" : "Skip"}
+                      </button>
+                    )}
 
                     {ev.htmlLink && (
                       <a
                         href={ev.htmlLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className={`flex items-center gap-1.5 text-[11px] font-black uppercase tracking-widest transition-colors ${past ? "text-white/30 hover:text-white/60" : `${color.text} hover:text-white`}`}
+                        className={`flex items-center gap-1.5 text-[11px] font-black tracking-widest transition-colors ${
+                          past || isSkipped ? "text-white/20 hover:text-white/60" : `${color.text} hover:text-white`
+                        }`}
                       >
                         Open in Calendar
                         <span className="material-symbols-outlined text-[14px]">open_in_new</span>

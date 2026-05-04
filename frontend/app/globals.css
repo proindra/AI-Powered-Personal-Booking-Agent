@@ -99,9 +99,9 @@ body {
 
 .brutalist-card:hover {
   border-color: #0066FF;
-  background: rgba(0, 102, 255, 0.05);
-  transform: translateY(-8px);
-  box-shadow: 0 20px 60px rgba(0, 102, 255, 0.08);
+  background: transparent;
+  transform: none;
+  box-shadow: none;
 }
 
 .glow-btn {
