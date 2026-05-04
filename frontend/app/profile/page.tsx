@@ -45,7 +45,7 @@ function CalendarPanel() {
         <span className="material-symbols-outlined text-[10px]">calendar_month</span>
         Google Calendar
         {connected && !loading && !error && (
-          <span className="ml-auto text-[#71717a] normal-case tracking-normal font-normal">
+          <span className="ml-auto text-white/40 normal-case tracking-normal font-normal">
             {events.length} event{events.length !== 1 ? 's' : ''}
           </span>
         )}
@@ -53,7 +53,7 @@ function CalendarPanel() {
 
       {!connected ? (
         <div className="flex-1 flex flex-col items-center justify-center py-2 text-center">
-          <p className="text-[#71717a] text-[9px] uppercase tracking-wider mb-2">Connect to sync sessions</p>
+          <p className="text-white/40 text-[9px] uppercase tracking-wider mb-2">Connect to sync sessions</p>
           <button
             onClick={handleConnect}
             disabled={requesting}
@@ -90,7 +90,7 @@ function CalendarPanel() {
 
           {/* Empty state */}
           {!loading && !error && events.length === 0 && (
-            <div className="text-center text-[#71717a] text-xs py-6 flex flex-col items-center gap-2">
+            <div className="text-center text-white/40 text-xs py-6 flex flex-col items-center gap-2">
               <span className="material-symbols-outlined text-2xl opacity-40">event_busy</span>
               No upcoming events
             </div>
@@ -111,11 +111,11 @@ function CalendarPanel() {
                     <span className="text-white text-[10px] font-semibold line-clamp-1 group-hover/ev:text-brand transition-colors">
                       {ev.summary || '(No title)'}
                     </span>
-                    <span className="material-symbols-outlined text-[10px] text-[#71717a] group-hover/ev:text-brand shrink-0 transition-colors">
+                    <span className="material-symbols-outlined text-[10px] text-white/40 group-hover/ev:text-brand shrink-0 transition-colors">
                       open_in_new
                     </span>
                   </div>
-                  <p className="text-[#71717a] text-[9px] mt-0.5">{formatDate(ev.start)}</p>
+                  <p className="text-white/40 text-[9px] mt-0.5">{formatDate(ev.start)}</p>
                 </a>
               ))}
             </div>
@@ -156,9 +156,9 @@ export default function ProfilePage() {
       {/* ── Left: Profile Control Panel ─────────────────── */}
       <div className="w-full lg:w-[460px] xl:w-[500px] shrink-0 h-[100dvh] border-r border-white/5 relative flex flex-col pt-16 lg:pt-20 pb-4 px-4 sm:px-8 lg:px-10 overflow-hidden">
         {/* Ambient glow */}
-        <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-brand/5 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-brand/5 rounded-full blur-[100px] pointer-events-none -z-10" />
         {/* Subtle dot-grid */}
-        <div className="absolute inset-0 pointer-events-none opacity-20 fixed" style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.4) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
+        <div className="absolute inset-0 pointer-events-none opacity-20 -z-10" style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.4) 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
 
         <div className="relative z-10 w-full max-w-[420px] mx-auto lg:mx-0 flex flex-col h-full justify-between py-2">
           {/* Header */}
@@ -168,9 +168,9 @@ export default function ProfilePage() {
               Active Session
             </span>
             <h1 className="font-black text-4xl lg:text-5xl xl:text-6xl uppercase leading-[0.85] tracking-tighter text-white mb-2 mt-1">
-              USER<br /><span className="text-brand">PROFILE</span>
+              USER<br /><span className="text-brand drop-shadow-[0_0_15px_rgba(0,102,255,0.4)]">PROFILE</span>
             </h1>
-            <p className="text-[#a1a1aa] text-xs leading-relaxed max-w-[280px]">
+            <p className="text-white/60 text-xs leading-relaxed max-w-[280px]">
               Manage your digital identity via distributed session protocol.
             </p>
           </div>
@@ -192,7 +192,7 @@ export default function ProfilePage() {
                 <h2 className="text-lg lg:text-xl font-black uppercase tracking-tighter leading-none mb-1 text-white line-clamp-1">
                   {session.profile?.name || 'Guest User'}
                 </h2>
-                <div className="text-[9px] font-bold tracking-[0.2em] text-[#a1a1aa] uppercase">Identity Confirmed</div>
+                <div className="text-[9px] font-bold tracking-[0.2em] text-white/50 uppercase">Identity Confirmed</div>
               </div>
             </div>
 
@@ -250,8 +250,8 @@ export default function ProfilePage() {
 
         {/* Technical Overlays */}
         <div className="absolute top-8 right-8 z-30 pointer-events-none flex flex-col items-end gap-2">
-          <span className="font-bold text-[#a1a1aa] text-[10px] uppercase tracking-[0.3em] border-b border-white/10 pb-1">Lanyard // Physics Env</span>
-          <span className="font-bold text-[#71717a] text-[10px] uppercase tracking-[0.3em]">Load state: Complete</span>
+          <span className="font-bold text-white/50 text-[10px] uppercase tracking-[0.3em] border-b border-white/10 pb-1">Lanyard // Physics Env</span>
+          <span className="font-bold text-white/30 text-[10px] uppercase tracking-[0.3em]">Load state: Complete</span>
         </div>
         
         <div className="absolute bottom-8 left-8 z-30 pointer-events-none flex items-center gap-4">
@@ -259,7 +259,7 @@ export default function ProfilePage() {
              <span className="material-symbols-outlined text-white/50 text-[14px]">360</span>
           </div>
           <div className="flex flex-col">
-            <span className="font-bold text-[#d4d4d8] text-[10px] uppercase tracking-widest">Interactive Element</span>
+            <span className="font-bold text-white/80 text-[10px] uppercase tracking-widest">Interactive Element</span>
             <span className="font-medium text-brand text-[9px] uppercase tracking-[0.2em] animate-pulse mt-0.5">Drag to rotate object</span>
           </div>
         </div>

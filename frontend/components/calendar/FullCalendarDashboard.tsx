@@ -247,8 +247,8 @@ export default function FullCalendarDashboard({ onBack, onDisconnect }: FullCale
           Google Calendar
         </span>
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-          <h2 className="font-black text-5xl md:text-6xl uppercase tracking-tighter leading-none text-white">
-            {currentLabelStr.split(" ")[0]}<br />
+          <h2 className="font-black text-4xl md:text-5xl uppercase tracking-tighter leading-none text-white flex items-baseline gap-3">
+            {currentLabelStr.split(" ")[0]}
             <span className="text-brand">{currentLabelStr.split(" ").slice(1).join(" ")}</span>
           </h2>
 
@@ -336,7 +336,7 @@ export default function FullCalendarDashboard({ onBack, onDisconnect }: FullCale
           style={{
             gridTemplateRows:
               viewMode === "month"
-                ? `repeat(${totalRows}, 80px)`
+                ? `repeat(${totalRows}, 1fr)`
                 : "minmax(300px, 1fr)",
           }}
         >

@@ -108,7 +108,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
           {/* Profile card */}
           <div className="px-4 pt-5 pb-4">
-            <div className="flex items-center gap-3 p-3 border border-white/[0.06] hover:border-brand/30 transition-colors cursor-pointer bg-white/[0.02]">
+            <Link href="/profile" className="flex items-center gap-3 p-3 border border-white/[0.06] hover:border-brand/30 transition-colors cursor-pointer bg-white/[0.02]">
               <div className="relative shrink-0">
                 <img
                   alt="User Avatar"
@@ -124,7 +124,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 </p>
                 <p className="text-[10px] text-brand/70 font-bold mt-0.5 uppercase tracking-widest">✦ Platinum</p>
               </div>
-            </div>
+            </Link>
           </div>
 
           {/* Nav links */}
